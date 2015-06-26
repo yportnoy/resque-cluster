@@ -6,5 +6,5 @@ require 'rspec'
 $LOAD_PATH << File.expand_path('lib/resque/*', File.dirname(__FILE__))
 $LOAD_PATH << File.expand_path('lib/resque/pool/*', File.dirname(__FILE__))
 
-require 'resque/distributed_pool'
+require 'resque/cluster'
 require 'resque/pool/patches'

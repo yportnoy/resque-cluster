@@ -1,4 +1,4 @@
-require 'resque/distributed_pool'
+require 'resque/cluster'
 
 module Resque
   # Resque Pool monkey patched methods for resque-pool
@@ -8,22 +8,22 @@ module Resque
       if GC.respond_to?(:copy_on_write_friendly=)
         GC.copy_on_write_friendly = true
       end
-      pool_config = Resque::DistributedPool.config ? {} : choose_config_file
+      pool_config = Resque::Cluster.config ? {} : choose_config_file
       started_pool = Resque::Pool.new(pool_config).start
-      Resque::DistributedPool.init(started_pool) if Resque::DistributedPool.config
+      Resque::Cluster.init(started_pool) if Resque::Cluster.config
       started_pool.join
-      Resque::DistributedPool.member.unregister if Resque::DistributedPool.member
+      Resque::Cluster.member.unregister if Resque::Cluster.member
     end
 
     # performed inside the run loop, must check for any distributed pool updates
     original_maintain_worker_count = instance_method(:maintain_worker_count)
     define_method(:maintain_worker_count) do
-      distributed_pool_update
+      cluster_update
       original_maintain_worker_count.bind(self).call
     end
 
-    def distributed_pool_update
-      Resque::DistributedPool.member.perform if Resque::DistributedPool.member
+    def cluster_update
+      Resque::Cluster.member.perform if Resque::Cluster.member
     end
 
     def adjust_worker_counts(worker, number)

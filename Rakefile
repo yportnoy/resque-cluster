@@ -15,8 +15,8 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification...
   # see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = 'resque-distributed_pool'
-  gem.homepage = 'http://github.com/yportnoy/resque-distributed_pool'
+  gem.name = 'resque-cluster'
+  gem.homepage = 'http://github.com/yportnoy/resque-cluster'
   gem.license = 'MIT'
   gem.summary = 'This gem sets up a resque pool cluster'
   gem.description = 'This gem sets up a resque pool cluster'

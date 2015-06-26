@@ -1,25 +1,25 @@
 require 'socket'
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-RSpec.describe Resque::DistributedPool::Member do
+RSpec.describe Resque::Cluster::Member do
   before :all do
     @redis = Redis.new
 
-    Resque::DistributedPool.config = {
+    Resque::Cluster.config = {
       cluster_name: 'test-cluster',
       environment: 'test',
       local_config_path: 'spec/local_config.yml',
       global_config_path: 'spec/global_config.yml',
       rebalance: true }
     @pool = Resque::Pool.new({"foo" => 1})
-    @member = Resque::DistributedPool.init(@pool)
+    @member = Resque::Cluster.init(@pool)
     @hostname = Socket.gethostname
   end
 
   after :all do
-    Resque::DistributedPool.member.unregister
-    Resque::DistributedPool.config = nil
-    Resque::DistributedPool.member = nil
+    Resque::Cluster.member.unregister
+    Resque::Cluster.config = nil
+    Resque::Cluster.member = nil
   end
 
   context '#register' do

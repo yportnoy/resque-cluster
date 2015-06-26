@@ -9,6 +9,6 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'resque/pool/patches'
 require 'resque/pool/cli_patches'
-require 'resque/distributed_pool'
+require 'resque/cluster'
 
 Resque::Pool::CLI.run

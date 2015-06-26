@@ -1,4 +1,4 @@
-require 'resque/distributed_pool/member'
+require 'resque/cluster/member'
 require 'yaml'
 
 module Resque
@@ -13,7 +13,7 @@ module Resque
         original_setup_environment.bind(self).call(opts)
         if opts[:cluster]
           puts "Starting as a cluster: #{opts[:cluster]} in #{opts[:environment]} environment, rebalance?: #{opts[:rebalance]}"
-          Resque::DistributedPool.config = {
+          Resque::Cluster.config = {
             cluster_name: opts[:cluster],
             environment: opts[:environment],
             local_config_path: opts[:config],

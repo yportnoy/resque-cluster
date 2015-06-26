@@ -2,9 +2,9 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 RSpec.describe Resque::Pool do
   after :each do
-    Resque::DistributedPool.member.unregister if Resque::DistributedPool.member
-    Resque::DistributedPool.config = nil
-    Resque::DistributedPool.member = nil
+    Resque::Cluster.member.unregister if Resque::Cluster.member
+    Resque::Cluster.config = nil
+    Resque::Cluster.member = nil
   end
 
   context "#run" do
@@ -12,7 +12,7 @@ RSpec.describe Resque::Pool do
       pool = nil
       ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
-      allow_any_instance_of(Resque::DistributedPool::Member).to receive(:unregister).and_return("")
+      allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
       Resque::Pool.run
       expect(pool.config['foo']).to eq(1)
     end
@@ -21,9 +21,9 @@ RSpec.describe Resque::Pool do
       pool = nil
       ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
-      allow_any_instance_of(Resque::DistributedPool::Member).to receive(:unregister).and_return("")
+      allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
 
-      Resque::DistributedPool.config = {:cluster_name=>"test-cluster",
+      Resque::Cluster.config = {:cluster_name=>"test-cluster",
                                         :environment=>"test",
                                         :local_config_path=>"spec/local_config.yml",
                                         :global_config_path=>"spec/global_config.yml",
@@ -40,9 +40,9 @@ RSpec.describe Resque::Pool do
       pool = nil
       ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
-      allow_any_instance_of(Resque::DistributedPool::Member).to receive(:unregister).and_return("")
+      allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
 
-      Resque::DistributedPool.config = {:cluster_name=>"test-cluster",
+      Resque::Cluster.config = {:cluster_name=>"test-cluster",
                                         :environment=>"test",
                                         :local_config_path=>"spec/local_config.yml",
                                         :global_config_path=>"spec/global_config.yml",
