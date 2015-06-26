@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
+gem 'resque-pool'
+
+require 'resque/pool/cli'
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+
+require 'resque/pool/patches'
+require 'resque/pool/cli_patches'
+require 'resque/distributed_pool'
+
+Resque::Pool::CLI.run
