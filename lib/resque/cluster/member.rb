@@ -62,7 +62,8 @@ module Resque
 
       def setup_gru
         client = Redis.new(Resque.redis.client.options)
-        Gru.with_redis_connection(client, @local_config, @global_config)
+        rebalance_flag = Cluster.config[:rebalance] || false
+        Gru.with_redis_connection(client, @local_config, @global_config, rebalance_flag)
       end
 
       def adjust_worker_counts(count_adjustments)
