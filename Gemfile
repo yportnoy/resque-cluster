@@ -4,8 +4,7 @@ gem 'resque', '~> 1.22'
 gem 'resque-pool', '~> 0.5.0'
 gem 'trollop', '~> 2.0'
 gem 'rake'
-gem 'gru', github: 'jgillis01/gru'
-
+gem 'gru'
 group :development do
   gem 'pry'
   gem 'awesome_print'
@@ -15,4 +14,5 @@ group :development do
   gem 'jeweler', '~> 2.0.1'
   gem 'simplecov', '>= 0'
   gem 'rubocop', '~> 0.31'
+  gem 'mock_redis', '~> 0.15.0'
 end

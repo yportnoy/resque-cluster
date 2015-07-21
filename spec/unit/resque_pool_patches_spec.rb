@@ -56,4 +56,15 @@ RSpec.describe Resque::Pool do
       expect(pool.config['foo,bar,baz']).to eq(1)
     end
   end
+
+  after :all do
+    @redis = Redis.new
+    @redis.del("resque:cluster:test-cluster:test")
+    @redis.del("resque:cluster:test-cluster:test:perun:running_workers")
+    @redis.del("GRU:#{@@hostname}:max_workers")
+    @redis.del("GRU:#{@@hostname}:workers_running")
+    @redis.del("GRU:global:max_workers")
+    @redis.del("GRU:global:workers_running")
+  end
+
 end
