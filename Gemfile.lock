@@ -1,8 +1,9 @@
 GIT
   remote: git://github.com/jgillis01/gru.git
-  revision: 2cf074a5f8b48024dc3b9eb70ceea1c15159fed9
+  revision: 6a263b16bd57f9d7bcec65e559b2c60cb735f7d3
+  branch: master
   specs:
-    gru (0.0.1)
+    gru (0.0.2)
       redis (> 0.0)
 
 GEM
@@ -45,6 +46,7 @@ GEM
     jwt (1.5.0)
     method_source (0.8.2)
     mini_portile (0.6.2)
+    mock_redis (0.15.0)
     mono_logger (1.1.0)
     multi_json (1.11.0)
     multi_xml (0.5.5)
@@ -127,6 +129,7 @@ DEPENDENCIES
   bundler (~> 1.0)
   gru!
   jeweler (~> 2.0.1)
+  mock_redis (~> 0.15.0)
   pry
   rake
   rdoc (~> 3.12)

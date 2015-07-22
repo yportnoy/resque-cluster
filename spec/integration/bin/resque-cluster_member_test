@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
+gem 'resque-pool'
+
+require 'resque/pool/cli'
+
+$LOAD_PATH.unshift File.expand_path('../../../../lib', __FILE__)
+
+require 'resque/pool/patches'
+require 'resque/pool/cli_patches'
+require 'resque/cluster'
+
+@@member_count = `ps -ef | grep resque-pool-master | grep -v grep|wc -l`.strip.to_i
+
+gem 'gru'
+
+module Gru
+  module Adapters
+    class RedisAdapter
+      def hostname
+        @hostname ||= "#{Socket.gethostname}@#{@@member_count+1}"
+      end
+    end
+  end
+end
+
+Resque::Pool::CLI.run
