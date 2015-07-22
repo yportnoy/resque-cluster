@@ -31,6 +31,11 @@ RSpec.describe "Resque test-cluster" do
       expect(@b.counts).to be_empty
       @c.stop
     end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+
   end
 
   context "Cluster with Rebalancing" do
@@ -60,6 +65,11 @@ RSpec.describe "Resque test-cluster" do
       @e.stop
       @f.stop
     end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+
   end
 
   context "Multiple Clusters and Environments" do

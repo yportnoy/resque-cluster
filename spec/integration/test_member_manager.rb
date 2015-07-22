@@ -56,7 +56,7 @@ class TestMemberManager
 
   def self.stop_all
     pools = `ps -ef | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $2}'`.split
-    `kill #{pools.join(' ')}`
+    `kill #{pools.join(' ')}` unless pools.empty?
     sleep(3)
   end
 end
