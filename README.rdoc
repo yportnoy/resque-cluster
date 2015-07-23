@@ -1,6 +1,6 @@
 = resque-cluster
 
-Description goes here.
+resque-cluster allows managing resque workers distributed across multiple hosts. It allows user to set the maximum number of workers to be running per host as well as the maximum number of workers running per cluster and maintains correct counts via a shared Redis server. resque-cluster is based on resque-pool and will still run in a non clustered mode if, for example, you are anticipating expanding across multiple hosts at a later time.
 
 == Contributing to resque-cluster
 
