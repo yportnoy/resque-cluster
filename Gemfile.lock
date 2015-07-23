@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/jgillis01/gru.git
-  revision: 6a263b16bd57f9d7bcec65e559b2c60cb735f7d3
+  revision: fbcd0000d544d8b1f57569289d1d14bf60aaca82
   branch: master
   specs:
     gru (0.0.2)

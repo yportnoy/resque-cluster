@@ -11,7 +11,6 @@ module Resque
 
       define_method(:setup_environment) do |opts|
         original_setup_environment.bind(self).call(opts)
-        binding.pry
         if opts[:cluster]
           puts "Starting as a cluster: #{opts[:cluster]} in #{opts[:environment]} environment"
           Resque::Cluster.config = {
