@@ -8,6 +8,11 @@ RSpec.describe Resque::Pool::CLI do
   end
 
   context "#run" do
+    before :each do
+      Resque::Cluster.config = nil
+      Resque::Cluster.member = nil
+    end
+
     it "sets up to run resque-pool the standard way if no params are passed in" do
       stub_const("ARGV", [])
       allow(Resque::Pool::CLI).to receive(:start_pool).and_return({ })
@@ -25,7 +30,7 @@ RSpec.describe Resque::Pool::CLI do
     end
 
     it "sets up to run resque-pool the cluster way if cluster param is passed in" do
-      stub_const("ARGV", ["-c", "spec/local_config.yml", "-E", "test", "-C", "test-cluster", "-R", "-G", "spec/global_config.yml"])
+      stub_const("ARGV", ["-c", "spec/local_config.yml", "-E", "test", "-C", "test-cluster", "-G", "spec/global_config.yml"])
       allow(Resque::Pool::CLI).to receive(:start_pool).and_return({ })
       Resque::Pool::CLI.run
       expect(Resque::Cluster.config[:cluster_name]).to eq("test-cluster")

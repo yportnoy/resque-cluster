@@ -11,14 +11,15 @@ module Resque
 
       define_method(:setup_environment) do |opts|
         original_setup_environment.bind(self).call(opts)
+        binding.pry
         if opts[:cluster]
-          puts "Starting as a cluster: #{opts[:cluster]} in #{opts[:environment]} environment, rebalance?: #{opts[:rebalance]}"
+          puts "Starting as a cluster: #{opts[:cluster]} in #{opts[:environment]} environment"
           Resque::Cluster.config = {
             cluster_name: opts[:cluster],
             environment: opts[:environment],
             local_config_path: opts[:config],
-            global_config_path: opts[:global_config],
-            rebalance: opts[:rebalance] }
+            global_config_path: opts[:global_config]
+          }
         end
       end
 
@@ -50,7 +51,6 @@ where [options] are:
           opt :term_immediate,     'On TERM signal, shut down workers immediately (default)'
           opt :single_process_group, 'Workers remain in the same process group as the master', default: false
           opt :cluster, 'Name of the cluster this resque-pool belongs to', type: String, short: '-C'
-          opt :rebalance, 'In a cluster mode, On TERM signal rebalance', default: false, short: '-R'
           opt :global_config, 'Alternate path to the global config file', type: String, short: '-G'
         end
         if opts[:daemon]

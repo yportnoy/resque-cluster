@@ -1,9 +1,8 @@
 class TestMemberManager
 
-  def initialize(local_config_path, global_config_path, rebalance, cluster_name = "test-cluster", environment = "test")
+  def initialize(local_config_path, global_config_path, cluster_name = "test-cluster", environment = "test")
     @local_config_path = local_config_path
     @global_config_path = global_config_path
-    @rebalance = rebalance
     @cluster_name = cluster_name
     @environment = environment
     @pid = nil
@@ -11,7 +10,7 @@ class TestMemberManager
   end
 
   def start
-    @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@local_config_path} -E #{@environment} -C #{@cluster_name}#{@rebalance ? " -R" : ""} -G #{@global_config_path}")
+    @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@local_config_path} -E #{@environment} -C #{@cluster_name} -G #{@global_config_path}")
 
     while ( @pool_master_pid.nil? ) do
       sleep(0.1)

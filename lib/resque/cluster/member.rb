@@ -13,7 +13,7 @@ module Resque
         @local_config = parse_config(Cluster.config[:local_config_path])
         @global_config = parse_config(Cluster.config[:global_config_path])
         @global_config = @local_config if global_config.empty?
-        @worker_count_manager = setup_gru
+        @worker_count_manager = initialize_gru
 
         register
       end
@@ -60,10 +60,8 @@ module Resque
         Resque.redis.hdel(global_prefix, hostname)
       end
 
-      def setup_gru
-        client = Redis.new(Resque.redis.client.options)
-        rebalance_flag = Cluster.config[:rebalance] || false
-        Gru.with_redis_connection(client, @local_config, @global_config, rebalance_flag)
+      def initialize_gru
+        Gru.create(cluster_member_settings)
       end
 
       def adjust_worker_counts(count_adjustments)
@@ -98,6 +96,17 @@ module Resque
         current_workers.each do |key, value|
           Resque.redis.hset(running_workers_key_name, key, value)
         end
+      end
+
+      def cluster_member_settings
+        {
+          cluster_maximums: @global_config[:global_maximums] || @global_config,
+          host_maximums:    @local_config,
+          client_settings:  Resque.redis.client.options,
+          rebalance_flag:   @global_config[:rebalance_cluster] || false,
+          cluster_name:     Cluster.config[:cluster_name],
+          environment_name: Cluster.config[:environment]
+        }
       end
     end
   end

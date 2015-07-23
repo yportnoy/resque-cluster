@@ -1,11 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
+LOCAL_CONFIG = "spec/integration/config/local_config.yml"
+GLOBAL_CONFIG = "spec/integration/config/global_config.yml"
+LOCAL_CONFIG2 = "spec/integration/config/local_config2.yml"
+GLOBAL_CONFIG2 = "spec/integration/config/global_config2.yml"
+GLOBAL_REBALANCE_CONFIG2 = "spec/integration/config/global_rebalance_config2.yml"
+
 RSpec.describe "Resque test-cluster" do
   context "Spin Up and Down" do
     before :all do
-      @a = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false)
-      @b = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false)
-      @c = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false)
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
     end
 
     it 'expects no workers to be running' do
@@ -40,9 +46,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Cluster with Rebalancing" do
     before :all do
-      @d = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", true)
-      @e = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", true)
-      @f = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", true)
+      @d = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
+      @e = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
+      @f = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
       @d.start
       @e.start
       @f.start
@@ -74,9 +80,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Clusters and Environments" do
     before :all do
-      @a = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false)
-      @b = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false, "test1-cluster")
-      @c = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", false, "test-cluster", "test1")
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test1-cluster")
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test-cluster", "test1")
       @a.start
       @b.start
       @c.start
@@ -97,9 +103,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Configs in the same cluster" do
     before :all do
-      @a = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_config.yml", true)
-      @b = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_config.yml", true)
-      @c = TestMemberManager.new("spec/integration/local_config.yml", "spec/integration/global_rebalance_config.yml", true)
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG)
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG2)
       @a.start
       @b.start
       sleep(3) # rebalance time
@@ -125,11 +131,11 @@ RSpec.describe "Resque test-cluster" do
     end
   end
 
-  context "Rebalance and non rebalance members in a cluster" do
+  context "Rebalance and non rebalance global configs switching in a cluster" do
     before :all do
-      @a = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", true)
-      @b = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", false)
-      @c = TestMemberManager.new("spec/integration/local_rebalance_config.yml", "spec/integration/global_rebalance_config.yml", true)
+      @a = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
+      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG2)
+      @c = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
       @a.start
       @b.start
       @c.start
@@ -151,6 +157,9 @@ RSpec.describe "Resque test-cluster" do
       end
       sleep(5) # rebalance time
       expect(TestMemberManager.counts).to eq({"star"=>12})
+      expect(@a.counts).to eq({"star"=>4})
+      expect(@b.counts).to eq({"star"=>4})
+      expect(@c.counts).to eq({"star"=>4})
     end
 
     after :all do
