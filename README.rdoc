@@ -1,6 +1,16 @@
 = resque-cluster
 
-resque-cluster allows managing resque workers distributed across multiple hosts. It allows user to set the maximum number of workers to be running per host as well as the maximum number of workers running per cluster and maintains correct counts via a shared Redis server. resque-cluster is based on resque-pool and will still run in a non clustered mode if, for example, you are anticipating expanding across multiple hosts at a later time.
+*resque-cluster* allows managing resque workers distributed across multiple hosts. It allows user to set the maximum number of workers to be running per host as well as the maximum number of workers running per cluster and maintains correct counts via a shared _Redis_ server. *resque-cluster* is based on _resque-pool_ gem and will still run in a non clustered mode if, for example, you are anticipating expanding across multiple hosts at a later time.
+
+== Installation
+
+  gem install resque-cluster
+Or, more likely, add it to the Gemfile used by your resque workers
+  gem resque-cluster
+
+== Usage
+
+  bundle exec resque-cluster_member <options>
 
 == Contributing to resque-cluster
 
