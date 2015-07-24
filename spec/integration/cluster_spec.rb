@@ -119,10 +119,10 @@ RSpec.describe "Resque test-cluster" do
 
     it 'expects the cluster to redistribute correctly after global config change' do
       @c.start
-      sleep(5) # rebalance time
-      expect(TestMemberManager.counts).to eq({"star"=>6})
+      sleep(8) # rebalance time
+      expect(TestMemberManager.counts).to eq({"star"=>4})
       expect(@a.counts).to be_empty
-      expect(@b.counts).to eq({"star"=>6})
+      expect(@b.counts).to eq({"star"=>4})
       expect(@c.counts).to be_empty
     end
 
@@ -155,7 +155,7 @@ RSpec.describe "Resque test-cluster" do
         @c.stop
         @c.start
       end
-      sleep(5) # rebalance time
+      sleep(8) # rebalance time
       expect(TestMemberManager.counts).to eq({"star"=>12})
       expect(@a.counts).to eq({"star"=>4})
       expect(@b.counts).to eq({"star"=>4})
@@ -166,7 +166,7 @@ RSpec.describe "Resque test-cluster" do
       @b.stop
       sleep(2)
       @b.start
-      sleep(5)
+      sleep(8)
       expect(TestMemberManager.counts).to eq({"star"=>12})
       expect(@a.counts).to eq({"star"=>6})
       expect(@b.counts).to eq({})
