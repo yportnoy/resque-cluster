@@ -69,8 +69,9 @@ RSpec.describe Resque::Cluster::Member do
 
   after :all do
     @redis.del("resque:cluster:unit-test-cluster:unit-test")
-    @redis.del("resque:cluster:unit-test-cluster:unit-test:perun:running_workers")
+    @redis.del("resque:cluster:unit-test-cluster:unit-test:#{@@hostname}:running_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:max_workers")
+    @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running")
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
   end

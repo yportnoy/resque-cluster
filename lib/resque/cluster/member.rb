@@ -99,7 +99,7 @@ module Resque
       end
 
       def cluster_member_settings
-        {
+        hash = {
           cluster_maximums: @global_config[:global_maximums] || @global_config,
           host_maximums:    @local_config,
           client_settings:  Resque.redis.client.options,
@@ -107,6 +107,8 @@ module Resque
           cluster_name:     Cluster.config[:cluster_name],
           environment_name: Cluster.config[:environment]
         }
+        puts hash
+        hash
       end
     end
   end
