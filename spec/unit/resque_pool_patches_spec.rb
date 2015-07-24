@@ -23,8 +23,8 @@ RSpec.describe Resque::Pool do
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
       allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
 
-      Resque::Cluster.config = {:cluster_name=>"test-cluster",
-                                        :environment=>"test",
+      Resque::Cluster.config = {:cluster_name=>"unit-test-cluster",
+                                        :environment=>"unit-test",
                                         :local_config_path=>"spec/local_config.yml",
                                         :global_config_path=>"spec/global_config.yml",
                                         :rebalance=>true}
@@ -59,12 +59,12 @@ RSpec.describe Resque::Pool do
 
   after :all do
     @redis = Redis.new
-    @redis.del("resque:cluster:unit-test-cluster:unit-test")
     @redis.del("resque:cluster:unit-test-cluster:unit-test:#{@@hostname}:running_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running")
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
+    @redis.del("resque:cluster:unit-test-cluster:unit-test")
   end
 
 end

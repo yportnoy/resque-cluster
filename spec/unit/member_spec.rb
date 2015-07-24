@@ -31,8 +31,10 @@ RSpec.describe Resque::Cluster::Member do
         :environment_name => "unit-test"
       }
     end
+
     it 'returns a correct cluster settings hash' do
       expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
+      Resque::Cluster.member.unregister
     end
 
     it 'returns a correct cluster settings hash with global_config with a rebalance param' do
@@ -91,10 +93,6 @@ RSpec.describe Resque::Cluster::Member do
   end
 
   after :all do
-    @redis.del("resque:cluster:unit-test-cluster:unit-test")
-    @redis.del("resque:cluster:unit-test-cluster:unit-test:#{@@hostname}:running_workers")
-    @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:max_workers")
-    @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running")
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
   end
