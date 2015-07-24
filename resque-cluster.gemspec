@@ -18,12 +18,8 @@ Gem::Specification.new do |s|
   s.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
-  s.add_dependency							'resque', '~> 1.22'
-  s.add_dependency              'resque-pool', '~> 0.5.0'
-  s.add_dependency              'trollop', '~> 2.0'
-  s.add_dependency              'rake', '~> 10.4'
-  s.add_dependency              'gru', '0.0.3'
-
+  s.add_dependency  'resque-pool', '~> 0.5.0'
+  s.add_dependency  'gru', '0.0.3'
 
   s.add_development_dependency 'pry', '> 0.0'
   s.add_development_dependency 'awesome_print', '> 0.0'

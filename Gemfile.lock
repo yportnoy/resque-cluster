@@ -1,7 +1,7 @@
 GIT
   remote: git://github.com/jgillis01/gru.git
-  revision: fbcd0000d544d8b1f57569289d1d14bf60aaca82
-  branch: master
+  revision: 363bd947b0a2059fb32df8175edbc8260e5d91fd
+  branch: WIP
   specs:
     gru (0.0.2)
       redis (> 0.0)
@@ -131,11 +131,8 @@ DEPENDENCIES
   jeweler (~> 2.0.1)
   mock_redis (~> 0.15.0)
   pry
-  rake
   rdoc (~> 3.12)
-  resque (~> 1.22)
   resque-pool (~> 0.5.0)
   rspec (~> 3.1.0)
   rubocop (~> 0.31)
   simplecov
-  trollop (~> 2.0)
