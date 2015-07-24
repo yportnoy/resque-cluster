@@ -8,7 +8,6 @@ module Resque
       attr_reader :hostname, :pool, :local_config, :global_config
 
       def initialize(started_pool)
-        @hostname = Socket.gethostname
         @pool = started_pool
         @local_config = parse_config(Cluster.config[:local_config_path])
         @global_config = parse_config(Cluster.config[:global_config_path])
@@ -45,7 +44,7 @@ module Resque
       end
 
       def member_prefix
-        "#{global_prefix}:#{@hostname}"
+        "#{global_prefix}:#{hostname}"
       end
 
       def running_workers_key_name
@@ -62,6 +61,10 @@ module Resque
 
       def initialize_gru
         Gru.create(cluster_member_settings)
+      end
+
+      def hostname
+        @hostname ||= Socket.gethostname
       end
 
       def adjust_worker_counts(count_adjustments)

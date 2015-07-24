@@ -11,15 +11,24 @@ require 'resque/pool/patches'
 require 'resque/pool/cli_patches'
 require 'resque/cluster'
 
-@@member_count = `ps -ef | grep resque-pool-master | grep -v grep|wc -l`.strip.to_i
-
 gem 'gru'
 
 module Gru
   module Adapters
     class RedisAdapter
       def hostname
-        @hostname ||= "#{Socket.gethostname}@#{@@member_count+1}"
+        @hostname ||= ENV['GRU_HOSTNAME']
+      end
+    end
+  end
+end
+
+module Resque
+  class Cluster
+    class Member
+      private
+      def hostname
+        @hostname ||= ENV['GRU_HOSTNAME']
       end
     end
   end

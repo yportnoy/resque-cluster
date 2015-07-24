@@ -10,6 +10,7 @@ class TestMemberManager
   end
 
   def start
+    ENV['GRU_HOSTNAME'] = hostname
     @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@local_config_path} -E #{@environment} -C #{@cluster_name} -G #{@global_config_path}")
 
     while ( @pool_master_pid.nil? ) do
@@ -53,9 +54,17 @@ class TestMemberManager
     final_counts
   end
 
+  def hostname
+    @hostname ||= "#{Socket.gethostname}-#{member_count+1}"
+  end
+
   def self.stop_all
     pools = `ps -ef | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $2}'`.split
     `kill #{pools.join(' ')}` unless pools.empty?
     sleep(3)
+  end
+
+  def member_count
+    `ps -ef | grep resque-pool-master | grep -v grep|wc -l`.strip.to_i
   end
 end
