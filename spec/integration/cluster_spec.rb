@@ -162,6 +162,17 @@ RSpec.describe "Resque test-cluster" do
       expect(@c.counts).to eq({"star"=>4})
     end
 
+    it 'will not rebalance after the cluster is switched to rebalance-cluster false' do
+      @b.stop
+      sleep(2)
+      @b.start
+      sleep(5)
+      expect(TestMemberManager.counts).to eq({"star"=>12})
+      expect(@a.counts).to eq({"star"=>6})
+      expect(@b.counts).to eq({})
+      expect(@c.counts).to eq({"star"=>6})
+    end
+
     after :all do
       TestMemberManager.stop_all
     end
