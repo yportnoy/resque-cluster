@@ -8,8 +8,8 @@ RSpec.describe Resque::Cluster::Member do
       cluster_name: 'unit-test-cluster',
       environment: 'unit-test',
       local_config_path: File.expand_path(File.dirname(__FILE__) + '/../local_config.yml'),
-      global_config_path: File.expand_path(File.dirname(__FILE__) + '/../global_config.yml'),
-      rebalance: true }
+      global_config_path: File.expand_path(File.dirname(__FILE__) + '/../global_config.yml')
+    }
     @pool = Resque::Pool.new({})
     @member = Resque::Cluster.init(@pool)
   end
@@ -18,6 +18,29 @@ RSpec.describe Resque::Cluster::Member do
     Resque::Cluster.member.unregister
     Resque::Cluster.config = nil
     Resque::Cluster.member = nil
+  end
+
+  context '#cluster_member_settings' do
+    before :all do
+      @settings_hash = {
+        :cluster_maximums => {'foo' => 2, 'bar' => 50, "foo,bar,baz" => 1},
+        :host_maximums => {'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1},
+        :client_settings => @redis.client.options,
+        :rebalance_flag => false,
+        :cluster_name => "unit-test-cluster",
+        :environment_name => "unit-test"
+      }
+    end
+    it 'returns a correct cluster settings hash' do
+      expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
+    end
+
+    it 'returns a correct cluster settings hash with global_config with a rebalance param' do
+      Resque::Cluster.config[:global_config_path] = File.expand_path(File.dirname(__FILE__) + '/../global_rebalance_config.yml')
+      @settings_hash[:rebalance_flag] = true
+      @member = Resque::Cluster.init(@pool)
+      expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
+    end
   end
 
   context '#register' do

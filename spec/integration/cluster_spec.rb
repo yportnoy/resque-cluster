@@ -62,7 +62,7 @@ RSpec.describe "Resque test-cluster" do
       expect(@f.counts).to eq({"star"=>4})
     end
 
-    it 'cluster adjusts correctly when a member stops' do
+    it 'adjusts correctly when a member stops' do
       @d.stop
       expect(TestMemberManager.counts).to eq({"star"=>12})
       expect(@d.counts).to be_empty

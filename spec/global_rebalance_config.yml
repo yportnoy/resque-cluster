@@ -1,0 +1,5 @@
+global_maximums:
+  foo: 2
+  bar: 50
+  "foo,bar,baz": 1
+rebalance_cluster: true
