@@ -1,6 +1,7 @@
 = resque-cluster
 
 *resque-cluster* allows managing resque workers distributed across multiple hosts. It allows user to set the maximum number of workers to be running per host as well as the maximum number of workers running per cluster and maintains correct counts via a shared _Redis_ server.
+
 *resque-cluster* is based on _resque-pool_ gem and will still run in a non clustered mode if, for example, you are anticipating expanding across multiple hosts at a later time.
 
 == Installation
@@ -15,21 +16,25 @@ Or, more likely, add it to the Gemfile used by your resque workers
 
 == Options
 
-  -c, --config=<s>              Path to the config(local/host maximums config in a cluster mode) YAML file. Always required
+  -c, --config=<s>              Path to the config(local/host maximums config in a cluster mode) 
+                                  YAML file. Always required
   -a, --appname=<s>             Application name
   -d, --daemon                  Run as a background daemon
   -o, --stdout=<s>              Redirect stdout to logfile
   -e, --stderr=<s>              Redirect stderr to logfile
   -n, --nosync                  Don't sync logfiles on every write
   -p, --pidfile=<s>             PID file location
-  -E, --environment=<s>         Set RAILS_ENV/RACK_ENV/RESQUE_ENV(in a cluster mode used for namespacing the cluster)
+  -E, --environment=<s>         Set RAILS_ENV/RACK_ENV/RESQUE_ENV(in a cluster mode used for
+                                  namespacing the cluster)
   -s, --spawn-delay=<i>         Delay in milliseconds between spawning missing workers
   -t, --term-graceful-wait      On TERM signal, wait for workers to shut down gracefully
   -r, --term-graceful           On TERM signal, shut down workers gracefully
   -m, --term-immediate          On TERM signal, shut down workers immediately (default)
   -i, --single-process-group    Workers remain in the same process group as the master
-  -C, --cluster=<s>             Name of the cluster this resque-pool belongs to. Required if you want to launch in a cluster mode
-  -G, --global-config=<s>       Path to the global config file(global/cluster maximums config in a cluster mode)
+  -C, --cluster=<s>             Name of the cluster this resque-pool belongs to. Required 
+                                  if you want to launch in a cluster mode
+  -G, --global-config=<s>       Path to the global config file(global/cluster maximums
+                                  config in a cluster mode)
   -v, --version                 Print version and exit
 
 == Local/Host Config
