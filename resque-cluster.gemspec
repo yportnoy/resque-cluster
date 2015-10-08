@@ -1,6 +1,6 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'resque-cluster/version'
+require 'resque/cluster/version'
 
 Gem::Specification.new do |s|
   s.name        = 'resque-cluster'
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency  'resque-pool', '~> 0.5.0'
-  s.add_dependency  'gru', '0.0.4'
+  s.add_dependency  'gru', '0.0.5'
 
   s.add_development_dependency 'pry', '> 0.0'
   s.add_development_dependency 'awesome_print', '> 0.0'
