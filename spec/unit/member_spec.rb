@@ -27,6 +27,7 @@ RSpec.describe Resque::Cluster::Member do
         :host_maximums => {'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1},
         :client_settings => @redis.client.options,
         :rebalance_flag => false,
+        :presume_host_dead_after => 120,
         :cluster_name => "unit-test-cluster",
         :environment_name => "unit-test"
       }
@@ -51,7 +52,7 @@ RSpec.describe Resque::Cluster::Member do
     end
 
     it 'pings into redis to let the rest of the cluster know of it' do
-      expect(@redis.hget('resque:cluster:unit-test-cluster:unit-test', @@hostname)).to_not be_nil
+      expect(@redis.hget('resque:cluster:unit-test-cluster:unit-test:pings', @@hostname)).to_not be_nil
     end
   end
 
