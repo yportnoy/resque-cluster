@@ -5,6 +5,7 @@ GLOBAL_CONFIG = "spec/integration/config/global_config.yml"
 LOCAL_CONFIG2 = "spec/integration/config/local_config2.yml"
 GLOBAL_CONFIG2 = "spec/integration/config/global_config2.yml"
 GLOBAL_REBALANCE_CONFIG2 = "spec/integration/config/global_rebalance_config2.yml"
+GLOBAL_CONFIG3 = "spec/integration/config/global_config3.yml"
 
 RSpec.describe "Resque test-cluster" do
   context "Spin Up and Down" do
@@ -176,6 +177,46 @@ RSpec.describe "Resque test-cluster" do
     after :all do
       TestMemberManager.stop_all
     end
+  end
+
+  context "In case one member gets reaped, the cluster rebalances after assuming a member dead" do
+    before :all do
+      sleep 5
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+    end
+
+    it 'expects no workers to be running' do
+      expect(TestMemberManager.counts).to be_empty
+      expect(@a.counts).to be_empty
+      expect(@b.counts).to be_empty
+      expect(@c.counts).to be_empty
+    end
+
+    it 'expects counts to be correct after workers get spun up' do
+      @a.start
+      @b.start
+      @c.start
+      expect(TestMemberManager.counts).to eq({"par"=>2, "tar"=>8, "par,tar,var"=>1})
+    end
+
+    it 'cluster adjusts correctly when a member gets reaped' do
+      @a.kill
+      sleep(10)
+      expect(TestMemberManager.counts).to eq({"tar"=>6, "par"=>2, "par,tar,var"=>1})
+      expect(@a.counts).to be_empty
+    end
+
+    it 'cluster rebalances correctly when the member gets brought back up' do
+      @a.start
+      expect(TestMemberManager.counts).to eq({"par"=>2, "tar"=>8, "par,tar,var"=>1})
+    end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+
   end
 
 end

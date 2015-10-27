@@ -33,6 +33,17 @@ class TestMemberManager
     sleep(5)
   end
 
+  def kill
+    puts "************************************************ About to kill -9 : Pool Master pid ---------- #{@pool_master_pid}"
+    `kill -9 #{@pool_master_pid}`
+    while ( @pool_master_pid ) do
+      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
+      @pool_master_pid = pool > 0 ? pool : nil
+    end
+    @pid = nil
+    sleep(5)
+  end
+
   def counts
     return {} unless @pool_master_pid
     local_workers = `ps --ppid #{@pool_master_pid} -fh | awk '{print $8}'`.split

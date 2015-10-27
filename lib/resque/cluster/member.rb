@@ -51,12 +51,16 @@ module Resque
         "#{member_prefix}:running_workers"
       end
 
+      def ping_namespace
+        global_prefix + ":pings"
+      end
+
       def ping
-        Resque.redis.hset(global_prefix, hostname, Time.now.utc)
+        Resque.redis.hset(ping_namespace, hostname, Time.now.utc)
       end
 
       def unping
-        Resque.redis.hdel(global_prefix, hostname)
+        Resque.redis.hdel(ping_namespace, hostname)
       end
 
       def initialize_gru
@@ -108,7 +112,8 @@ module Resque
           client_settings:  Resque.redis.client.options,
           rebalance_flag:   @global_config["rebalance_cluster"] || false,
           cluster_name:     Cluster.config[:cluster_name],
-          environment_name: Cluster.config[:environment]
+          environment_name: Cluster.config[:environment],
+          presume_host_dead_after: @global_config["presume_dead_after"] || 120
         }
       end
     end
