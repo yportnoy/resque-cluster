@@ -29,13 +29,16 @@ RSpec.describe "Resque test-cluster" do
       expect(TestMemberManager.counts).to eq({"par"=>2, "tar"=>8, "par,tar,var"=>1})
     end
 
-    it 'cluster adjusts correctly when a member stops' do
+    it 'cluster adjusts correctly when a member stops and doesn\'t let global counts become negative' do
       @a.stop
       expect(TestMemberManager.counts).to eq({"tar"=>6, "par"=>2, "par,tar,var"=>1})
       expect(@a.counts).to be_empty
       @b.stop
       expect(TestMemberManager.counts).to eq({"tar"=>3, "par"=>1, "par,tar,var"=>1})
       expect(@b.counts).to be_empty
+      Resque.redis.redis.hset("GRU:test:test-cluster:global:workers_running", "par", "-1")
+      sleep(1)
+      expect(Resque.redis.redis.hset("GRU:test:test-cluster:global:workers_running", "par").to be("0")
       @c.stop
     end
 
