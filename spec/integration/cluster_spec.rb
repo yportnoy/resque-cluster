@@ -38,7 +38,7 @@ RSpec.describe "Resque test-cluster" do
       expect(@b.counts).to be_empty
       Resque.redis.redis.hset("GRU:test:test-cluster:global:workers_running", "par", "-1")
       sleep(1)
-      expect(Resque.redis.redis.hset("GRU:test:test-cluster:global:workers_running", "par").to be("0")
+      expect(Resque.redis.redis.hget("GRU:test:test-cluster:global:workers_running", "par")).to eq("0")
       @c.stop
     end
 
