@@ -13,21 +13,13 @@ module Resque
         @global_config = parse_config(Cluster.config[:global_config_path])
         @global_config = @local_config if global_config.empty?
         @worker_count_manager = initialize_gru
-
-        register
       end
 
       def perform
         check_for_worker_count_adjustment
-        ping
-      end
-
-      def register
-        ping
       end
 
       def unregister
-        unping
         remove_counts
         unqueue_all_workers
       end
@@ -49,18 +41,6 @@ module Resque
 
       def running_workers_key_name
         "#{member_prefix}:running_workers"
-      end
-
-      def ping_namespace
-        global_prefix + ":pings"
-      end
-
-      def ping
-        Resque.redis.hset(ping_namespace, hostname, Time.now.utc)
-      end
-
-      def unping
-        Resque.redis.hdel(ping_namespace, hostname)
       end
 
       def initialize_gru
@@ -113,7 +93,8 @@ module Resque
           rebalance_flag:   @global_config["rebalance_cluster"] || false,
           cluster_name:     Cluster.config[:cluster_name],
           environment_name: Cluster.config[:environment],
-          presume_host_dead_after: @global_config["presume_dead_after"] || 120
+          presume_host_dead_after: @global_config["presume_dead_after"] || 120,
+          manage_worker_heartbeats: true
         }
       end
     end

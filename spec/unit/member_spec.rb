@@ -15,7 +15,7 @@ RSpec.describe Resque::Cluster::Member do
   end
 
   after :all do
-    Resque::Cluster.member.unregister
+    Resque::Cluster.member
     Resque::Cluster.config = nil
     Resque::Cluster.member = nil
   end
@@ -29,13 +29,14 @@ RSpec.describe Resque::Cluster::Member do
         :rebalance_flag => false,
         :presume_host_dead_after => 120,
         :cluster_name => "unit-test-cluster",
-        :environment_name => "unit-test"
+        :environment_name => "unit-test",
+        :manage_worker_heartbeats => true
       }
     end
 
     it 'returns a correct cluster settings hash' do
       expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
-      Resque::Cluster.member.unregister
+      Resque::Cluster.member
     end
 
     it 'returns a correct cluster settings hash with global_config with a rebalance param' do
@@ -43,16 +44,6 @@ RSpec.describe Resque::Cluster::Member do
       @settings_hash[:rebalance_flag] = true
       @member = Resque::Cluster.init(@pool)
       expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
-    end
-  end
-
-  context '#register' do
-    before :all do
-      @member.register
-    end
-
-    it 'pings into redis to let the rest of the cluster know of it' do
-      expect(@redis.hget('resque:cluster:unit-test-cluster:unit-test:pings', @@hostname)).to_not be_nil
     end
   end
 
@@ -75,27 +66,10 @@ RSpec.describe Resque::Cluster::Member do
     end
   end
 
-  context '#unregister' do
-    before :all do
-      @member.unregister
-    end
-
-    it 'removes everything about itself from redis' do
-      expect(@redis.hget('resque:cluster:unit-test-cluster:unit-test', @@hostname)).to be_nil
-      expect(@redis.get("resque:cluster:unit-test-cluster:unit-test:#{@@hostname}:running_workers")).to be_nil
-    end
-
-    it 'moves all the current running workers into the global queue if rebalance_on_termination is set to true' do
-      expect(@redis.hget('GRU:unit-test:unit-test-cluster:global:workers_running', 'bar')).to eq '0'
-      expect(@redis.hget('GRU:unit-test:unit-test-cluster:global:workers_running', 'foo')).to eq '0'
-      expect(@redis.hget("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running", 'bar')).to be_nil
-      expect(@redis.hget("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running", 'foo')).to be_nil
-    end
-  end
-
   after :all do
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
+    @redis.del("GRU:unit-test:unit-test-cluster:heartbeats")
   end
 
 end

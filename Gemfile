@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'resque-pool', '~> 0.5.0'
-gem 'gru', '0.0.10'
+gem 'gru', '= 0.1.0'
 
 group :development do
   gem 'pry'
