@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency  'resque-pool', '~> 0.5.0'
-  s.add_dependency  'gru', '0.0.10'
+  s.add_dependency  'gru', '0.1.1'
 
   s.add_development_dependency 'pry', '> 0.0'
   s.add_development_dependency 'awesome_print', '> 0.0'

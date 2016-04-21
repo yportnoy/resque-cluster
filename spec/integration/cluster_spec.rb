@@ -6,6 +6,7 @@ LOCAL_CONFIG2 = "spec/integration/config/local_config2.yml"
 GLOBAL_CONFIG2 = "spec/integration/config/global_config2.yml"
 GLOBAL_REBALANCE_CONFIG2 = "spec/integration/config/global_rebalance_config2.yml"
 GLOBAL_CONFIG3 = "spec/integration/config/global_config3.yml"
+GLOBAL_CONFIG4 = "spec/integration/config/global_config4.yml"
 
 RSpec.describe "Resque test-cluster" do
   context "Spin Up and Down" do
@@ -221,5 +222,40 @@ RSpec.describe "Resque test-cluster" do
     end
 
   end
+
+  context "Cluster with Rebalancing And max_workers_per_host set" do
+    before :all do
+      @g = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
+      @h = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
+      @i = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
+      @g.start
+      @h.start
+      @i.start
+      sleep(5) # rebalance time
+    end
+
+    it 'expects counts to be correct after workers get spun up' do
+      expect(TestMemberManager.counts).to eq({"star"=>12})
+      expect(@g.counts).to eq({"star"=>4})
+      expect(@h.counts).to eq({"star"=>4})
+      expect(@g.counts).to eq({"star"=>4})
+    end
+
+    it 'adjusts correctly when a member stops' do
+      @g.stop
+      expect(TestMemberManager.counts).to eq({"star"=>10})
+      expect(@g.counts).to be_empty
+      expect(@h.counts).to eq({"star"=>5})
+      expect(@i.counts).to eq({"star"=>5})
+      @h.stop
+      @i.stop
+    end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+
+  end
+
 
 end

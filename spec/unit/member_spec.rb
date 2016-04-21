@@ -28,6 +28,7 @@ RSpec.describe Resque::Cluster::Member do
         :client_settings => @redis.client.options,
         :rebalance_flag => false,
         :presume_host_dead_after => 120,
+        :max_workers_per_host => nil,
         :cluster_name => "unit-test-cluster",
         :environment_name => "unit-test",
         :manage_worker_heartbeats => true
