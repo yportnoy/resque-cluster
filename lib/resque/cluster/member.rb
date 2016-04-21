@@ -87,13 +87,14 @@ module Resque
 
       def cluster_member_settings
         {
-          cluster_maximums: @global_config["global_maximums"] || @global_config,
-          host_maximums:    @local_config,
-          client_settings:  Resque.redis.client.options,
-          rebalance_flag:   @global_config["rebalance_cluster"] || false,
-          cluster_name:     Cluster.config[:cluster_name],
-          environment_name: Cluster.config[:environment],
-          presume_host_dead_after: @global_config["presume_dead_after"] || 120,
+          cluster_maximums:         @global_config["global_maximums"] || @global_config,
+          host_maximums:            @local_config,
+          client_settings:          Resque.redis.client.options,
+          rebalance_flag:           @global_config["rebalance_cluster"] || false,
+          max_workers_per_host:     @global_config["max_workers_per_host"] || nil,
+          cluster_name:             Cluster.config[:cluster_name],
+          environment_name:         Cluster.config[:environment],
+          presume_host_dead_after:  @global_config["presume_dead_after"] || 120,
           manage_worker_heartbeats: true
         }
       end

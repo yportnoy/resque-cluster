@@ -1,0 +1,4 @@
+global_maximums:
+  star: 12
+max_workers_per_host: 5
+rebalance_cluster: true
