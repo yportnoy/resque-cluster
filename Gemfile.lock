@@ -23,7 +23,7 @@ GEM
       multi_json (>= 1.7.5, < 2.0)
       nokogiri (~> 1.6.3)
       oauth2
-    gru (0.1.0)
+    gru (0.1.1)
       redis (> 0.0)
     hashie (3.4.2)
     highline (1.7.2)
@@ -121,7 +121,7 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   bundler (~> 1.0)
-  gru (= 0.1.0)
+  gru (= 0.1.1)
   jeweler (~> 2.0.1)
   mock_redis (~> 0.15.0)
   pry
