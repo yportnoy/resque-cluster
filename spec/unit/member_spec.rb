@@ -34,18 +34,6 @@ RSpec.describe Resque::Cluster::Member do
         :manage_worker_heartbeats => true
       }
     end
-
-    it 'returns a correct cluster settings hash' do
-      expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
-      Resque::Cluster.member
-    end
-
-    it 'returns a correct cluster settings hash with global_config with a rebalance param' do
-      Resque::Cluster.config[:global_config_path] = File.expand_path(File.dirname(__FILE__) + '/../global_rebalance_config.yml')
-      @settings_hash[:rebalance_flag] = true
-      @member = Resque::Cluster.init(@pool)
-      expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
-    end
   end
 
   context '#check_for_worker_count_adjustment' do
