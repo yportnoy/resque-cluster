@@ -20,22 +20,6 @@ RSpec.describe Resque::Cluster::Member do
     Resque::Cluster.member = nil
   end
 
-  context '#cluster_member_settings' do
-    before :all do
-      @settings_hash = {
-        :cluster_maximums => {'foo' => 2, 'bar' => 50, "foo,bar,baz" => 1},
-        :host_maximums => {'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1},
-        :client_settings => @redis.client.options,
-        :rebalance_flag => false,
-        :presume_host_dead_after => 120,
-        :max_workers_per_host => nil,
-        :cluster_name => "unit-test-cluster",
-        :environment_name => "unit-test",
-        :manage_worker_heartbeats => true
-      }
-    end
-  end
-
   context '#check_for_worker_count_adjustment' do
     before :all do
       @redis.hset("GRU:unit-test:unit-test-cluster:global:max_workers","bar",2)
@@ -56,6 +40,8 @@ RSpec.describe Resque::Cluster::Member do
   end
 
   after :all do
+    binding.pry
+    @member.unregister
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
     @redis.del("GRU:unit-test:unit-test-cluster:heartbeats")
