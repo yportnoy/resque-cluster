@@ -17,6 +17,7 @@ RSpec.describe Resque::Cluster::Config do
       local_config_path = File.expand_path(File.dirname(__FILE__) + '/../local_config.yml')
       global_config_path = File.expand_path(File.dirname(__FILE__) + '/../global_config.yml')
       @config = Resque::Cluster::Config.new(local_config_path, global_config_path)
+
       @correct_hash = {
         :cluster_maximums => {'foo' => 2, 'bar' => 50, "foo,bar,baz" => 1},
         :host_maximums => {'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1},
@@ -26,7 +27,8 @@ RSpec.describe Resque::Cluster::Config do
         :max_workers_per_host => nil,
         :cluster_name => "unit-test-cluster",
         :environment_name => "unit-test",
-        :manage_worker_heartbeats => true
+        :manage_worker_heartbeats => true,
+        :version_hash => `git rev-parse --verify HEAD`.strip
       }
     end
 

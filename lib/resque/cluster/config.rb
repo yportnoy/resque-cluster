@@ -30,7 +30,8 @@ module Resque
           cluster_name:             Cluster.config[:cluster_name],
           environment_name:         Cluster.config[:environment],
           presume_host_dead_after:  @global["presume_dead_after"] || 120,
-          manage_worker_heartbeats: true
+          manage_worker_heartbeats: true,
+          version_hash:             @version_git_hash
         }
       end
 
