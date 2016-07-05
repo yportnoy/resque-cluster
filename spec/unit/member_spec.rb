@@ -40,7 +40,6 @@ RSpec.describe Resque::Cluster::Member do
   end
 
   after :all do
-    binding.pry
     @member.unregister
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
