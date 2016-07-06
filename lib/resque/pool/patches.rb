@@ -22,6 +22,11 @@ module Resque
       original_maintain_worker_count.bind(self).call
     end
 
+    def quit
+      log "Quiting ..."
+      Process.kill(:TERM, Process.pid)
+    end
+
     def cluster_update
       Resque::Cluster.member.perform if Resque::Cluster.member
     end

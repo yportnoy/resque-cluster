@@ -1,4 +1,5 @@
 class TestMemberManager
+  attr_accessor :pid
 
   def initialize(local_config_path, global_config_path, cluster_name = "test-cluster", environment = "test")
     @local_config_path = local_config_path
@@ -12,14 +13,17 @@ class TestMemberManager
   def start
     ENV['GRU_HOSTNAME'] = hostname
     @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@local_config_path} -E #{@environment}#{@cluster_name.nil? ? "" : " -C "+@cluster_name} -G #{@global_config_path}")
+    count = 0
 
-    while ( @pool_master_pid.nil? ) do
+    while ( @pool_master_pid.nil? && count <= 100 ) do
       sleep(0.1)
       child_process = @pid #`pgrep -P #{@pid}`.strip
       pool = `ps -p #{child_process} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
       @pool_master_pid = pool > 0 ? pool : nil
+      count += 1
     end
-    puts "Pool Master pid is ---------- #{@pool_master_pid}"
+
+    puts "Pool Master pid is ---------- #{@pool_master_pid}" if @pool_master_pid
   end
 
   def stop
@@ -31,6 +35,15 @@ class TestMemberManager
     end
     @pid = nil
     sleep(5)
+  end
+
+  def is_running?
+    begin
+      ppid = Process.getpgid(@pid)
+      ! `ps auxx|grep #{ppid}|grep "resque-pool-master"|grep -v "grep"`.empty?
+    rescue
+      false
+    end
   end
 
   def kill

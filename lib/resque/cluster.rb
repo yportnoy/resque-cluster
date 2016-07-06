@@ -1,4 +1,5 @@
 require 'resque/cluster/member'
+require 'resque/cluster/config'
 
 module Resque
   # Distributed Pool is a clustered resque-pool

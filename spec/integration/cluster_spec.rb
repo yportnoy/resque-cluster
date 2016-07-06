@@ -2,6 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 LOCAL_CONFIG = "spec/integration/config/local_config.yml"
 GLOBAL_CONFIG = "spec/integration/config/global_config.yml"
+BAD_GLOBAL_CONFIG = "spec/integration/config/bad_global_config.yml"
+BAD_LOCAL_CONFIG = "spec/integration/config/bad_local_config.yml"
 LOCAL_CONFIG2 = "spec/integration/config/local_config2.yml"
 GLOBAL_CONFIG2 = "spec/integration/config/global_config2.yml"
 GLOBAL_REBALANCE_CONFIG2 = "spec/integration/config/global_rebalance_config2.yml"
@@ -48,6 +50,31 @@ RSpec.describe "Resque test-cluster" do
     end
 
   end
+
+  context "Cluster with bad configs" do
+    before :all do
+      @d = TestMemberManager.new(LOCAL_CONFIG2, BAD_GLOBAL_CONFIG)
+      @e = TestMemberManager.new(BAD_LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG2)
+      @f = TestMemberManager.new("", "")
+      @d.start
+      @e.start
+      @f.start
+      sleep(5) # rebalance time
+    end
+
+    it 'expects counts to be correct after workers get spun up' do
+      expect(TestMemberManager.counts).to eq({})
+      expect(@d.is_running?).to eq(false)
+      expect(@e.is_running?).to eq(false)
+      expect(@f.is_running?).to eq(false)
+    end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+
+  end
+
 
   context "Cluster with Rebalancing" do
     before :all do
