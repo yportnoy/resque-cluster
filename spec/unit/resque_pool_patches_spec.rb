@@ -59,9 +59,9 @@ RSpec.describe Resque::Pool do
 
   after :all do
     @redis = Redis.new
-    @redis.del("resque:cluster:unit-test-cluster:unit-test:#{@@hostname}:running_workers")
-    @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:max_workers")
-    @redis.del("GRU:unit-test:unit-test-cluster:#{@@hostname}:workers_running")
+    @redis.del("resque:cluster:unit-test-cluster:unit-test:#{HOSTNAME}:running_workers")
+    @redis.del("GRU:unit-test:unit-test-cluster:#{HOSTNAME}:max_workers")
+    @redis.del("GRU:unit-test:unit-test-cluster:#{HOSTNAME}:workers_running")
     @redis.del("GRU:unit-test:unit-test-cluster:global:max_workers")
     @redis.del("GRU:unit-test:unit-test-cluster:global:workers_running")
     @redis.del("resque:cluster:unit-test-cluster:unit-test")

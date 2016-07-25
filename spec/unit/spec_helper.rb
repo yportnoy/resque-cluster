@@ -10,4 +10,4 @@ $LOAD_PATH << File.expand_path('lib/resque/pool/*', File.dirname(__FILE__))
 require 'resque/cluster'
 require 'resque/pool/patches'
 
-@@hostname = Socket.gethostname
+HOSTNAME = Socket.gethostname
