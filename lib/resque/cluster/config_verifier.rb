@@ -1,6 +1,6 @@
 module Resque
   class Cluster
-    class ConfigVerifyer
+    class ConfigVerifier
       attr_accessor :local_config_path, :global_config_path,
 
       def initialize(global_config_path, local_config_path = nil)
