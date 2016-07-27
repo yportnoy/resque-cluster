@@ -11,3 +11,7 @@ require 'resque/cluster'
 require 'resque/pool/patches'
 
 HOSTNAME = Socket.gethostname
+
+def support_dir
+  @support_dir ||= Pathname.new(File.dirname(__FILE__)) + 'support'
+end
