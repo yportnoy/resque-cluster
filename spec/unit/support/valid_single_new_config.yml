@@ -1,0 +1,13 @@
+rebalance_cluster: true
+max_workers_per_host: 10
+presume_dead_after: 60
+workers:
+  foo:
+    local: 1
+    global: 2
+  bar:
+    local: 9
+    global: 50
+  "foo,bar,baz":
+    local: 1
+    global: 1
