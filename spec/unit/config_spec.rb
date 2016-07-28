@@ -62,7 +62,7 @@ RSpec.describe Resque::Cluster::Config do
       expect(config.errors.count).to eql(1)
       expect(config.warnings.count).to eql(0)
       expect(config.errors).to contain_exactly(
-        "/Users/benjamin/optoro/resque-cluster/spec/local_configuration.yml: Configuration file doesn't exist")
+        "#{local_config_path}: Configuration file doesn't exist")
     end
 
     it "gru_format should return a an empty hash" do
