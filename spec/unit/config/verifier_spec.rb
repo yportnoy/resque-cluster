@@ -43,7 +43,7 @@ module Resque
       it 'reports the error' do
         subject.verified?
 
-        expect(subject.configs.flat_map(&:errors)).to include("Configuration file doesn't exist")
+        expect(subject.configs.flat_map { |config| config.errors.to_a }).to include("Configuration file doesn't exist")
       end
     end
 
@@ -55,7 +55,7 @@ module Resque
       it 'reports the error' do
         subject.verified?
 
-        expect(subject.configs.flat_map(&:errors)).to include("Parsed config as invalid type: expected Hash, got FalseClass")
+        expect(subject.configs.flat_map { |config| config.errors.to_a }).to include("Parsed config as invalid type: expected Hash, got FalseClass")
       end
     end
 
@@ -67,7 +67,7 @@ module Resque
       it 'reports the error' do
         subject.verified?
 
-        expect(subject.configs.flat_map(&:errors)).to include("Config file is empty")
+        expect(subject.configs.flat_map { |config| config.errors.to_a }).to include("Config file is empty")
       end
     end
 
@@ -79,7 +79,7 @@ module Resque
       it 'reports the error' do
         subject.verified?
 
-        expect(subject.configs.flat_map(&:errors)).to include('(<unknown>): did not find expected comment or line break while scanning a block scalar at line 1 column 1')
+        expect(subject.configs.flat_map { |config| config.errors.to_a }).to include('(<unknown>): did not find expected comment or line break while scanning a block scalar at line 1 column 1')
       end
     end
   end
