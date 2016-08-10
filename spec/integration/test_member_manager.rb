@@ -1,5 +1,3 @@
-require 'sys/proctable'
-
 class TestMemberManager
   include Sys
 
