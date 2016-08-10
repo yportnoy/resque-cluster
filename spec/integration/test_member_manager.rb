@@ -46,8 +46,8 @@ class TestMemberManager
   end
 
   def is_running?
-    ProcTable.ps(@pid) &&
-      (ProcTable.ps(@pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/)
+    (ProcTable.ps(@pid).instance_of? (Struct::ProcTableStruct)) &&
+      ! (ProcTable.ps(@pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/).nil?
   end
 
   def kill
