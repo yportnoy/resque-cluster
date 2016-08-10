@@ -10,7 +10,7 @@ RSpec.describe Resque::Pool do
   context "#run" do
     it "pool config is not empty if running in a non cluster mode after initialization" do
       pool = nil
-      ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
+      ENV['RESQUE_POOL_CONFIG'] = "spec/pool_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
       allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
       Resque::Pool.run
@@ -19,14 +19,13 @@ RSpec.describe Resque::Pool do
 
     it "pool config is empty if running in a cluster mode after initialization" do
       pool = nil
-      ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
+      ENV['RESQUE_POOL_CONFIG'] = "spec/pool_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
       allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
 
       Resque::Cluster.config = {:cluster_name=>"unit-test-cluster",
                                         :environment=>"unit-test",
-                                        :local_config_path=>"spec/local_config.yml",
-                                        :global_config_path=>"spec/global_config.yml",
+                                        :config_path=>"spec/config.yml",
                                         :rebalance=>true}
 
       Resque::Pool.run
@@ -38,14 +37,13 @@ RSpec.describe Resque::Pool do
   context "#maintain_worker_count" do
     it "should adjust current number of workers" do
       pool = nil
-      ENV['RESQUE_POOL_CONFIG'] = "spec/local_config.yml"
+      ENV['RESQUE_POOL_CONFIG'] = "spec/pool_config.yml"
       allow_any_instance_of(Resque::Pool).to receive(:join) {|instance| pool = instance }
       allow_any_instance_of(Resque::Cluster::Member).to receive(:unregister).and_return("")
 
       Resque::Cluster.config = {:cluster_name=>"unit-test-cluster",
                                         :environment=>"unit-test",
-                                        :local_config_path=>"spec/local_config.yml",
-                                        :global_config_path=>"spec/global_config.yml",
+                                        :config_path=>"spec/config.yml",
                                         :rebalance=>true}
 
       Resque::Pool.run

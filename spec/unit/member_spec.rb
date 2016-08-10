@@ -7,8 +7,7 @@ RSpec.describe Resque::Cluster::Member do
     Resque::Cluster.config = {
       cluster_name: 'unit-test-cluster',
       environment: 'unit-test',
-      local_config_path: File.expand_path(File.dirname(__FILE__) + '/../local_config.yml'),
-      global_config_path: File.expand_path(File.dirname(__FILE__) + '/../global_config.yml')
+      config_path: File.expand_path(File.dirname(__FILE__) + '/../config.yml'),
     }
     @pool = Resque::Pool.new({})
     @member = Resque::Cluster.init(@pool)

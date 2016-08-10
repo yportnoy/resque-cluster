@@ -16,8 +16,7 @@ module Resque
           Resque::Cluster.config = {
             cluster_name: opts[:cluster],
             environment: opts[:environment],
-            local_config_path: opts[:config],
-            global_config_path: opts[:global_config]
+            config_path: opts[:config]
           }
         end
       end
@@ -50,7 +49,6 @@ where [options] are:
           opt :term_immediate,     'On TERM signal, shut down workers immediately (default)'
           opt :single_process_group, 'Workers remain in the same process group as the master', default: false
           opt :cluster, 'Name of the cluster this resque-pool belongs to', type: String, short: '-C'
-          opt :global_config, 'Alternate path to the global config file', type: String, short: '-G'
         end
         if opts[:daemon]
           opts[:stdout] ||= 'log/resque-pool.stdout.log'

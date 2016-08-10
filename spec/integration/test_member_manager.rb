@@ -1,9 +1,8 @@
 class TestMemberManager
   attr_accessor :pid
 
-  def initialize(local_config_path, global_config_path, cluster_name = "test-cluster", environment = "test")
-    @local_config_path = local_config_path
-    @global_config_path = global_config_path
+  def initialize(config_path, cluster_name = "test-cluster", environment = "test")
+    @config_path = config_path
     @cluster_name = cluster_name
     @environment = environment
     @pid = nil
@@ -12,13 +11,13 @@ class TestMemberManager
 
   def start
     ENV['GRU_HOSTNAME'] = hostname
-    @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@local_config_path} -E #{@environment}#{@cluster_name.nil? ? "" : " -C "+@cluster_name} -G #{@global_config_path}")
+    @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@config_path} -E #{@environment}#{@cluster_name.nil? ? "" : " -C "+@cluster_name}")
     count = 0
 
     while ( @pool_master_pid.nil? && count <= 100 ) do
       sleep(0.1)
       child_process = @pid #`pgrep -P #{@pid}`.strip
-      pool = `ps -p #{child_process} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
+      pool = `ps -p #{child_process} -hf | grep 'resque-pool-master\\[.\\+\\]: managing \\[' | awk '{print $1}'`.strip.to_i
       @pool_master_pid = pool > 0 ? pool : nil
       count += 1
     end
@@ -30,7 +29,7 @@ class TestMemberManager
     puts "************************************************ About to kill : Pool Master pid ---------- #{@pool_master_pid}"
     Process.kill(:TERM, @pool_master_pid)
     while ( @pool_master_pid ) do
-      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
+      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[.\\+\\]: managing \\[' | awk '{print $1}'`.strip.to_i
       @pool_master_pid = pool > 0 ? pool : nil
     end
     @pid = nil
@@ -50,7 +49,7 @@ class TestMemberManager
     puts "************************************************ About to kill -9 : Pool Master pid ---------- #{@pool_master_pid}"
     `kill -9 #{@pool_master_pid}`
     while ( @pool_master_pid ) do
-      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
+      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[.\\+\\]: managing \\[' | awk '{print $1}'`.strip.to_i
       @pool_master_pid = pool > 0 ? pool : nil
     end
     @pid = nil
@@ -83,7 +82,7 @@ class TestMemberManager
   end
 
   def self.stop_all
-    pools = `ps -ef | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $2}'`.split
+    pools = `ps -ef | grep 'resque-pool-master\\[.\\+\\]: managing \\[' | awk '{print $2}'`.split
     `kill #{pools.join(' ')}` unless pools.empty?
     sleep(3)
   end

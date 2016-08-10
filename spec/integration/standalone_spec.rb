@@ -1,14 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-LOCAL_CONFIG = "spec/integration/config/local_config.yml"
-GLOBAL_CONFIG = "spec/integration/config/global_config.yml"
+CONFIG = "spec/integration/config/pool_config.yml"
 
 RSpec.describe "resque-cluster" do
   context "running 3 resque-cluster members in a standalone mode" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, nil)
-      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, nil)
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, nil)
+      @a = TestMemberManager.new(CONFIG, nil)
+      @b = TestMemberManager.new(CONFIG, nil)
+      @c = TestMemberManager.new(CONFIG, nil)
     end
 
     it 'expects no workers to be running' do

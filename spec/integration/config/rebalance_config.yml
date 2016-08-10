@@ -1,0 +1,5 @@
+workers:
+  star:
+    local: 6
+    global: 12
+rebalance_cluster: true

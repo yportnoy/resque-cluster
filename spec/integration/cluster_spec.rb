@@ -1,21 +1,20 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'resque'
 
-LOCAL_CONFIG = "spec/integration/config/local_config.yml"
-GLOBAL_CONFIG = "spec/integration/config/global_config.yml"
-BAD_GLOBAL_CONFIG = "spec/integration/config/bad_global_config.yml"
-BAD_LOCAL_CONFIG = "spec/integration/config/bad_local_config.yml"
-LOCAL_CONFIG2 = "spec/integration/config/local_config2.yml"
-GLOBAL_CONFIG2 = "spec/integration/config/global_config2.yml"
-GLOBAL_REBALANCE_CONFIG2 = "spec/integration/config/global_rebalance_config2.yml"
-GLOBAL_CONFIG3 = "spec/integration/config/global_config3.yml"
-GLOBAL_CONFIG4 = "spec/integration/config/global_config4.yml"
+CONFIG               = "spec/integration/config/config.yml"
+BAD_CONFIG           = "spec/integration/config/bad_config.yml"
+REBALANCE_CONFIG     = "spec/integration/config/rebalance_config.yml"
+NON_REBALANCE_CONFIG = "spec/integration/config/non_rebalance_config.yml"
+WEIRD_CONFIG         = "spec/integration/config/weird_config.yml"
+PRESUME_DEAD_CONFIG  = "spec/integration/config/presume_dead_config.yml"
+MAX_WORKERS_CONFIG   = "spec/integration/config/max_workers_config.yml"
 
 RSpec.describe "Resque test-cluster" do
   context "Spin Up and Down" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @a = TestMemberManager.new(CONFIG)
+      @b = TestMemberManager.new(CONFIG)
+      @c = TestMemberManager.new(CONFIG)
     end
 
     it 'expects no workers to be running' do
@@ -53,8 +52,8 @@ RSpec.describe "Resque test-cluster" do
 
   context "Cluster with bad configs" do
     before :all do
-      @d = TestMemberManager.new(LOCAL_CONFIG2, BAD_GLOBAL_CONFIG)
-      @e = TestMemberManager.new(BAD_LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG2)
+      @d = TestMemberManager.new(BAD_CONFIG)
+      @e = TestMemberManager.new(BAD_CONFIG)
       @f = TestMemberManager.new("", "")
       @d.start
       @e.start
@@ -78,9 +77,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Cluster with Rebalancing" do
     before :all do
-      @d = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
-      @e = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
-      @f = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
+      @d = TestMemberManager.new(REBALANCE_CONFIG)
+      @e = TestMemberManager.new(REBALANCE_CONFIG)
+      @f = TestMemberManager.new(REBALANCE_CONFIG)
       @d.start
       @e.start
       @f.start
@@ -112,9 +111,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Clusters and Environments" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test1-cluster")
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test-cluster", "test1")
+      @a = TestMemberManager.new(CONFIG)
+      @b = TestMemberManager.new(CONFIG, "test1-cluster")
+      @c = TestMemberManager.new(CONFIG, "test-cluster", "test1")
       @a.start
       @b.start
       @c.start
@@ -135,9 +134,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Configs in the same cluster" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG)
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG2)
+      @a = TestMemberManager.new(CONFIG)
+      @b = TestMemberManager.new(WEIRD_CONFIG)
+      @c = TestMemberManager.new(REBALANCE_CONFIG)
       @a.start
       @b.start
       sleep(3) # rebalance time
@@ -165,9 +164,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Rebalance and non rebalance global configs switching in a cluster" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
-      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG2)
-      @c = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
+      @a = TestMemberManager.new(REBALANCE_CONFIG)
+      @b = TestMemberManager.new(NON_REBALANCE_CONFIG)
+      @c = TestMemberManager.new(REBALANCE_CONFIG)
       @a.start
       @b.start
       @c.start
@@ -213,9 +212,9 @@ RSpec.describe "Resque test-cluster" do
   context "In case one member gets reaped, the cluster rebalances after assuming a member dead" do
     before :all do
       sleep 5
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
-      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+      @a = TestMemberManager.new(PRESUME_DEAD_CONFIG)
+      @b = TestMemberManager.new(PRESUME_DEAD_CONFIG)
+      @c = TestMemberManager.new(PRESUME_DEAD_CONFIG)
     end
 
     it 'expects no workers to be running' do
@@ -247,14 +246,13 @@ RSpec.describe "Resque test-cluster" do
     after :all do
       TestMemberManager.stop_all
     end
-
   end
 
   context "Cluster with Rebalancing And max_workers_per_host set" do
     before :all do
-      @g = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
-      @h = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
-      @i = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG4)
+      @g = TestMemberManager.new(MAX_WORKERS_CONFIG)
+      @h = TestMemberManager.new(MAX_WORKERS_CONFIG)
+      @i = TestMemberManager.new(MAX_WORKERS_CONFIG)
       @g.start
       @h.start
       @i.start
@@ -281,8 +279,5 @@ RSpec.describe "Resque test-cluster" do
     after :all do
       TestMemberManager.stop_all
     end
-
   end
-
-
 end

@@ -1,0 +1,10 @@
+workers:
+  par:
+    local: 1
+    global: 2
+  tar:
+    local: 3
+    global: 8
+  "par,tar,var":
+    local: 1
+    global: 1

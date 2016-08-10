@@ -1,0 +1,4 @@
+workers:
+  par= 2
+  ? tar: 8
+  "par,tar,var"+ 1

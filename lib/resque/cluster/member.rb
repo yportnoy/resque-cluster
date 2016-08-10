@@ -9,7 +9,7 @@ module Resque
 
       def initialize(started_pool)
         @pool = started_pool
-        @config = Config.new(Cluster.config[:local_config_path], Cluster.config[:global_config_path])
+        @config = Config.new(Cluster.config[:config_path])
         if @config.verified?
           @config.log_warnings
           @worker_count_manager = initialize_gru

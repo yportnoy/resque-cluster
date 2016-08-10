@@ -1,0 +1,7 @@
+workers:
+  foo:
+    local: 1
+  bar:
+    local: 9
+  "foo,bar,baz":
+    local: 1

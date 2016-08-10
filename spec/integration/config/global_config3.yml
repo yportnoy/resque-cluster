@@ -1,5 +1,0 @@
-global_maximums:
-  par: 2
-  tar: 8
-  "par,tar,var": 1
-presume_dead_after: 10
