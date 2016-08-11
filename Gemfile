@@ -4,6 +4,8 @@ gem 'resque-pool', '~> 0.5.0'
 gem 'gru', '= 0.1.2'
 
 group :development do
+  gem 'sys-proctable'
+  gem 'ffi'
   gem 'pry'
   gem 'awesome_print'
   gem 'rspec', '~> 3.1.0'

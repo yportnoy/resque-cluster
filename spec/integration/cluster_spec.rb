@@ -66,6 +66,7 @@ RSpec.describe "Resque test-cluster" do
       expect(@d.is_running?).to eq(false)
       expect(@e.is_running?).to eq(false)
       expect(@f.is_running?).to eq(false)
+      expect(TestMemberManager.resque_cluster_members.count).to eq(0)
     end
 
     after :all do
