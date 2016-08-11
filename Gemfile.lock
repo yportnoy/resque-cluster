@@ -14,6 +14,7 @@ GEM
     docile (1.1.5)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    ffi (1.9.10)
     git (1.2.9.1)
     github_api (0.12.3)
       addressable (~> 2.3)
@@ -122,6 +123,7 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   bundler (~> 1.0)
+  ffi
   gru (= 0.1.2)
   jeweler (~> 2.0.1)
   mock_redis (~> 0.15.0)
@@ -134,4 +136,4 @@ DEPENDENCIES
   sys-proctable
 
 BUNDLED WITH
-   1.11.2
+   1.12.5
