@@ -9,8 +9,6 @@ module Resque
 
       attr_reader :configs, :config, :global_config, :verifier, :version_git_hash
 
-      delegate :verified? => :verifier
-
       def initialize(config_path, global_config_path = nil)
         @config = Config::File.new(config_path)
 
@@ -26,8 +24,13 @@ module Resque
           end
         end
 
+        @errors           = Set.new
         @verifier         = Verifier.new(configs)
         @version_git_hash = config_version
+      end
+
+      def verified?
+        verifier.verified? && complete_worker_config?
       end
 
       def gru_format
@@ -48,7 +51,7 @@ module Resque
       end
 
       def errors
-        configs.map { |config| config.errors.map { |error| "#{config}: #{error}" } }.flatten
+        @errors + configs.map { |config| config.errors.map { |error| "#{config}: #{error}" } }.flatten
       end
 
       def warnings
@@ -68,6 +71,15 @@ module Resque
       end
 
       private
+
+      def complete_worker_config?
+        host = host_maximums.delete_if { |_, v| v.nil? }
+        cluster = cluster_maximums.delete_if { |_, v| v.nil? }
+
+        (host.keys == cluster.keys).tap do |complete|
+          @errors << "Every worker configuration must contain a local and a global maximum." unless complete
+        end
+      end
 
       def host_maximums
         case config_type
