@@ -17,7 +17,7 @@ module Resque
             errors << "Parsed config as invalid type: expected Hash, got #{contents.class}"
           end
 
-          contents.is_a?(Hash) && contents.any?
+          contents.is_a?(Hash) && contents.any? && complete_worker_config?
         end
 
         def errors
@@ -33,6 +33,14 @@ module Resque
 
               nil
             end
+        end
+
+        private
+
+        def complete_worker_config?
+          contents['workers'].all? { |_, maximums| maximums.key?('local') && maximums.key?('global') }.tap do |complete|
+            errors << "Every worker configuration must contain a local and a global maximum." unless complete
+          end
         end
       end
     end

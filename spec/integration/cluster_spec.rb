@@ -5,7 +5,7 @@ CONFIG               = "spec/integration/config/config.yml"
 BAD_CONFIG           = "spec/integration/config/bad_config.yml"
 REBALANCE_CONFIG     = "spec/integration/config/rebalance_config.yml"
 NON_REBALANCE_CONFIG = "spec/integration/config/non_rebalance_config.yml"
-WEIRD_CONFIG         = "spec/integration/config/weird_config.yml"
+BROKEN_CONFIG        = "spec/integration/config/broken_config.yml"
 PRESUME_DEAD_CONFIG  = "spec/integration/config/presume_dead_config.yml"
 MAX_WORKERS_CONFIG   = "spec/integration/config/max_workers_config.yml"
 
@@ -133,29 +133,18 @@ RSpec.describe "Resque test-cluster" do
     end
   end
 
-  context "Multiple Configs in the same cluster" do
+  context 'Broken config' do
     before :all do
       @a = TestMemberManager.new(CONFIG)
-      @b = TestMemberManager.new(WEIRD_CONFIG)
-      @c = TestMemberManager.new(REBALANCE_CONFIG)
+      @b = TestMemberManager.new(BROKEN_CONFIG)
       @a.start
       @b.start
-      sleep(3) # rebalance time
+      sleep(5) # rebalance time
     end
 
-    it 'expects to have each cluster member only running workers in it\'s config' do
-      expect(TestMemberManager.counts).to eq({"tar"=>3, "par"=>1, "par,tar,var"=>1})
-      expect(@a.counts).to eq({"tar"=>3, "par"=>1, "par,tar,var"=>1})
-      expect(@b.counts).to be_empty
-    end
-
-    it 'expects the cluster to redistribute correctly after global config change' do
-      @c.start
-      sleep(8) # rebalance time
-      expect(TestMemberManager.counts).to eq({"star"=>4})
-      expect(@a.counts).to be_empty
-      expect(@b.counts).to eq({"star"=>4})
-      expect(@c.counts).to be_empty
+    it 'has the correct initial number of workers' do
+      expect(TestMemberManager.counts).to eq('par' => 1, 'tar' => 3, 'par,tar,var' => 1)
+      expect(@a.counts).to eq('par' => 1, 'tar' => 3, 'par,tar,var' => 1)
     end
 
     after :all do

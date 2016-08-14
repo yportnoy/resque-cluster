@@ -1,13 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-CONFIG = "spec/integration/config/pool_config.yml"
+POOL_CONFIG = "spec/integration/config/pool_config.yml"
 
 RSpec.describe "resque-cluster" do
   context "running 3 resque-cluster members in a standalone mode" do
     before :all do
-      @a = TestMemberManager.new(CONFIG, nil)
-      @b = TestMemberManager.new(CONFIG, nil)
-      @c = TestMemberManager.new(CONFIG, nil)
+      @a = TestMemberManager.new(POOL_CONFIG, nil)
+      @b = TestMemberManager.new(POOL_CONFIG, nil)
+      @c = TestMemberManager.new(POOL_CONFIG, nil)
     end
 
     it 'expects no workers to be running' do

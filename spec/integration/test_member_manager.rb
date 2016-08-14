@@ -13,7 +13,7 @@ class TestMemberManager
 
   def start
     ENV['GRU_HOSTNAME'] = hostname
-    @pid = spawn("bundle exec spec/integration/bin/resque-cluster_member_test -c #{@config_path} -E #{@environment}#{@cluster_name.nil? ? "" : " -C "+@cluster_name}")
+    @pid = spawn("spec/integration/bin/resque-cluster_member_test -c #{@config_path} -E #{@environment}#{@cluster_name.nil? ? "" : " -C "+@cluster_name}")
     count = 0
 
     while ( @pool_master_pid.nil? && count <= 100 ) do

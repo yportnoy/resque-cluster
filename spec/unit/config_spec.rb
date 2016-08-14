@@ -1,7 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 RSpec.describe Resque::Cluster::Config do
-  let(:redis) { Resque.redis }
+  let(:redis)  { Resque.redis }
+  let(:config) { Resque::Cluster::Config.new(config_path) }
 
   before do
     Resque::Cluster.config = {
@@ -10,9 +11,8 @@ RSpec.describe Resque::Cluster::Config do
     }
   end
 
-  describe 'with a single config file' do
-    let(:config_path) { support_dir + 'valid_single_new_config.yml' }
-    let(:config)      { Resque::Cluster::Config.new(config_path) }
+  describe 'with a valid config file' do
+    let(:config_path) { support_dir + 'valid_config.yml' }
 
     let(:correct_hash) do
       {
@@ -38,16 +38,39 @@ RSpec.describe Resque::Cluster::Config do
     end
   end
 
-  describe "with invalid config file" do
+  describe 'with a missing local maximum' do
+    let(:config_path) { support_dir + 'missing_local_maximum.yml' }
+
+    it 'should not be verified' do
+      expect(config).not_to be_verified
+    end
+
+    it 'should not be verified' do
+      expect(config.errors).to contain_exactly("Every worker configuration must contain a local and a global maximum.")
+    end
+  end
+
+  describe 'with a missing global maximum' do
+    let(:config_path) { support_dir + 'missing_global_maximum.yml' }
+
+    it 'should not be verified' do
+      expect(config).not_to be_verified
+    end
+
+    it 'should not be verified' do
+      expect(config.errors).to contain_exactly("Every worker configuration must contain a local and a global maximum.")
+    end
+  end
+
+  describe "with a missing config file" do
     let(:config_path)  { File.expand_path(File.dirname(__FILE__) + '/../missing.yml') }
-    let(:config)       { Resque::Cluster::Config.new(config_path) }
     let(:correct_hash) { {} }
 
-    it "should not be verified" do
+    it 'should not be verified' do
       expect(config.verified?).to eql(false)
     end
 
-    it "config should have no warnings but 2 errors" do
+    it "config should have no warnings and 1 error" do
       expect(config.errors.count).to eql(1)
       expect(config.warnings.count).to eql(0)
       expect(config.errors).to contain_exactly("Configuration file doesn't exist")

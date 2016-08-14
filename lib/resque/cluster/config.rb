@@ -61,7 +61,7 @@ module Resque
 
       def cluster_maximums
         config['workers'].each.with_object({}) do |(pool, maximums), global_maximums|
-          global_maximums[pool] = maximums['global'] || maximums['local']
+          global_maximums[pool] = maximums['global']
         end
       end
 
