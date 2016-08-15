@@ -1,4 +1,6 @@
 class TestMemberManager
+  include Sys
+
   attr_accessor :pid
 
   def initialize(local_config_path, global_config_path, cluster_name = "test-cluster", environment = "test")
@@ -17,9 +19,13 @@ class TestMemberManager
 
     while ( @pool_master_pid.nil? && count <= 100 ) do
       sleep(0.1)
-      child_process = @pid #`pgrep -P #{@pid}`.strip
-      pool = `ps -p #{child_process} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
-      @pool_master_pid = pool > 0 ? pool : nil
+
+      if (ProcTable.ps(@pid) &&
+          ProcTable.ps(@pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/)
+        pool_pid = ProcTable.ps(@pid).pid
+      end
+
+      @pool_master_pid = pool_pid ? pool_pid : nil
       count += 1
     end
 
@@ -28,50 +34,52 @@ class TestMemberManager
 
   def stop
     puts "************************************************ About to kill : Pool Master pid ---------- #{@pool_master_pid}"
-    Process.kill(:TERM, @pool_master_pid)
+    Process.kill(:QUIT, @pool_master_pid)
     while ( @pool_master_pid ) do
-      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
-      @pool_master_pid = pool > 0 ? pool : nil
+      if (ProcTable.ps(@pool_master_pid) &&
+          ! (ProcTable.ps(@pool_master_pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/))
+        @pool_master_pid = nil
+      end
     end
     @pid = nil
-    sleep(5)
+    sleep(3)
   end
 
   def is_running?
-    begin
-      ppid = Process.getpgid(@pid)
-      ! `ps auxx|grep #{ppid}|grep "resque-pool-master"|grep -v "grep"`.empty?
-    rescue
-      false
-    end
+    (ProcTable.ps(@pid).instance_of? (Struct::ProcTableStruct)) &&
+      ! (ProcTable.ps(@pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/).nil?
   end
 
   def kill
     puts "************************************************ About to kill -9 : Pool Master pid ---------- #{@pool_master_pid}"
-    `kill -9 #{@pool_master_pid}`
+    Process.kill(:TERM, @pool_master_pid)
     while ( @pool_master_pid ) do
-      pool = `ps -p #{@pool_master_pid} -hf | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $1}'`.strip.to_i
-      @pool_master_pid = pool > 0 ? pool : nil
+      if (ProcTable.ps(@pool_master_pid) &&
+          ! (ProcTable.ps(@pool_master_pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/))
+        @pool_master_pid = nil
+      end
     end
     @pid = nil
-    sleep(5)
+    sleep(3)
   end
 
   def counts
     return {} unless @pool_master_pid
-    local_workers = `ps --ppid #{@pool_master_pid} -fh | awk '{print $8}'`.split
+    local_workers = ProcTable.ps.select{|p| p.ppid == @pool_master_pid}.map(&:cmdline)
     TestMemberManager.worker_counts(local_workers)
   end
 
   def self.counts
-    all_workers = `ps -ef | grep "resque-" | grep "Waiting for" | grep -v ps| awk '{print $11}'`.split
+    pool_pids = resque_cluster_members.map(&:pid)
+    all_workers = ProcTable.ps.select{|p| pool_pids.include? p.ppid}.map(&:cmdline)
     worker_counts(all_workers)
   end
 
   def self.worker_counts(worker_array)
     final_counts = Hash.new(0)
 
-    worker_array.each do |worker|
+    worker_array.each do |worker_cmdline|
+      worker = parse_worker_name(worker_cmdline)
       final_counts[worker] += 1
     end
 
@@ -82,13 +90,23 @@ class TestMemberManager
     @hostname ||= "#{Socket.gethostname}-#{member_count+1}"
   end
 
+  def self.parse_worker_name(worker_cmdline)
+    worker_cmdline.gsub(/resque(\d|\.|-)*:\sWaiting\sfor\s/, '')
+  end
+
   def self.stop_all
-    pools = `ps -ef | grep 'resque-pool-master\\[resque-cluster\\]: managing \\[' | awk '{print $2}'`.split
-    `kill #{pools.join(' ')}` unless pools.empty?
+    TestMemberManager.resque_cluster_members.each do |member|
+      Process.kill(:TERM, member.pid)
+    end
     sleep(3)
   end
 
   def member_count
-    `ps -ef | grep resque-pool-master | grep -v grep|wc -l`.strip.to_i
+    TestMemberManager.resque_cluster_members.count
   end
+
+  def self.resque_cluster_members
+    ProcTable.ps.select{|p| p.cmdline =~ /resque-pool-master/}
+  end
+
 end
