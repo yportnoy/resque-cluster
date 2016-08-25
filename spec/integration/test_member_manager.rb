@@ -50,9 +50,9 @@ class TestMemberManager
       ! (ProcTable.ps(@pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/).nil?
   end
 
-  def kill
-    puts "************************************************ About to kill -9 : Pool Master pid ---------- #{@pool_master_pid}"
-    Process.kill(:TERM, @pool_master_pid)
+  def kill(signal = :TERM)
+    puts "************************************************ About to kill : Pool Master pid ---------- #{@pool_master_pid}"
+    Process.kill(signal, @pool_master_pid)
     while ( @pool_master_pid ) do
       if (ProcTable.ps(@pool_master_pid) &&
           ! (ProcTable.ps(@pool_master_pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/))
