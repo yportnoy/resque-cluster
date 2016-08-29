@@ -54,7 +54,9 @@ class TestMemberManager
     puts "************************************************ About to kill : Pool Master pid ---------- #{@pool_master_pid}"
     Process.kill(signal, @pool_master_pid)
     while ( @pool_master_pid ) do
-      if (ProcTable.ps(@pool_master_pid) &&
+      if ProcTable.ps(@pool_master_pid).nil?
+        @pool_master_pid = nil
+      elsif (ProcTable.ps(@pool_master_pid) &&
           ! (ProcTable.ps(@pool_master_pid).cmdline =~ /resque-pool-master\[resque-cluster\]:\smanaging\s\[/))
         @pool_master_pid = nil
       end

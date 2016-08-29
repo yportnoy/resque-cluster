@@ -5,6 +5,7 @@ gem 'gru', '= 0.1.2'
 
 group :development do
   gem 'sys-proctable'
+  gem 'redis'
   gem 'ffi'
   gem 'pry'
   gem 'awesome_print'

@@ -282,8 +282,51 @@ RSpec.describe "Resque test-cluster" do
     after :all do
       TestMemberManager.stop_all
     end
-
   end
 
+  describe 'Recovery after a member is killed' do
+    let(:redis)    { Redis.new }
+    let(:hostname) { `hostname`.chomp }
 
+    let(:orig_g_counts) { { 'par' => '1', 'tar' => '3', 'par,tar,var' => '1' } }
+    let(:orig_h_counts) { { 'par' => '1', 'tar' => '3', 'par,tar,var' => '0' } }
+    let(:orig_i_counts) { { 'par' => '0', 'tar' => '2', 'par,tar,var' => '0' } }
+
+    let(:g_counts) { redis.hgetall("GRU:test:test-cluster:#{hostname}-1:workers_running") }
+    let(:h_counts) { redis.hgetall("GRU:test:test-cluster:#{hostname}-2:workers_running") }
+    let(:i_counts) { redis.hgetall("GRU:test:test-cluster:#{hostname}-3:workers_running") }
+
+    before :all do
+      @g = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @h = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @i = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @g.start
+      @h.start
+      @i.start
+      sleep(5) # rebalance time
+    end
+
+    it 'should have the correct counts in redis' do
+      expect(g_counts).to eq(orig_g_counts)
+      expect(h_counts).to eq(orig_h_counts)
+      expect(i_counts).to eq(orig_i_counts)
+    end
+
+    it 'should not change the counts in redis when a member is killed' do
+      @i.kill(:KILL)
+      sleep(5)
+      expect(g_counts).to eq(orig_g_counts)
+      expect(h_counts).to eq(orig_h_counts)
+      expect(i_counts).to eq(orig_i_counts)
+    end
+
+    it 'test' do
+      TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      binding.pry
+    end
+
+    after :all do
+      TestMemberManager.stop_all
+    end
+  end
 end
