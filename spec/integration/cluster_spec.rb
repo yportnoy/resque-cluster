@@ -136,30 +136,29 @@ RSpec.describe "Resque test-cluster" do
     end
   end
 
-  context "Multiple Configs in the same cluster" do
+  context "Rebalance after global maximums change" do
     before :all do
       @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG2)
-      @c = TestMemberManager.new(REBALANCE_CONFIG, GLOBAL_REBALANCE_CONFIG3)
+      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG3)
       @a.start
       @b.start
       sleep(3) # rebalance time
     end
 
     it 'expects to have each cluster member only running workers in its config' do
-      expect(TestMemberManager.counts).to eq('tar' => 3, 'par' => 1, 'par,tar,var' => 1, 'star' => 6)
-      expect(@a.counts).to eq('tar' => 3, 'par' => 1, 'par,tar,var' => 1)
-      expect(@b.counts).to eq('star' => 6)
+      expect(TestMemberManager.counts).to eq('par' => 2, 'tar' => 6, 'par,tar,var' => 1)
+      expect(@a.counts).to eq('par' => 1, 'tar' => 3, 'par,tar,var' => 1)
+      expect(@b.counts).to eq('par' => 1, 'tar' => 3)
     end
 
     it 'expects the cluster to redistribute correctly after global config change' do
       @c.start
       sleep(8) # rebalance time
-      # gru expects maximums to be uniform across the cluster and fails to use all available capacity if they're not
-      expect(TestMemberManager.counts).to eq('par' => 3, 'tar' => 6, 'par,tar,var' => 3, 'star' => 8)
-      expect(@a.counts).to eq('par' => 1, 'tar' => 3, 'par,tar,var' => 1)
-      expect(@b.counts).to eq('star' => 4)
-      expect(@c.counts).to eq('par' => 2, 'tar' => 3, 'par,tar,var' => 2, 'star' => 4)
+      expect(TestMemberManager.counts).to eq('par' => 3, 'tar' => 6, 'par,tar,var' => 2)
+      expect(@a.counts).to eq('par' => 1, 'tar' => 2, 'par,tar,var' => 1)
+      expect(@b.counts).to eq('par' => 1, 'tar' => 2)
+      expect(@c.counts).to eq('par' => 1, 'tar' => 2, 'par,tar,var' => 1)
     end
 
     after :all do
