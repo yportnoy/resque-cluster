@@ -1,0 +1,9 @@
+foo: 1
+bar: 9
+"foo,bar,baz": 1
+rebalance_cluster: true
+max_workers_per_host: 10
+presume_dead_after: 60
+global_maximums:
+  bar: 50
+  "foo,bar,baz": 1

@@ -1,0 +1,5 @@
+rebalance_cluster: true
+global_maximums:
+  par: 4
+  tar: 6
+  "par,tar,var": 2

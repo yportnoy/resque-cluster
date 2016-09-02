@@ -1,0 +1,3 @@
+workers:
+  foo:
+    global: 1
