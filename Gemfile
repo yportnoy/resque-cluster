@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'resque-pool', '~> 0.5.0'
-gem 'gru', '= 0.1.2'
+gem 'gru'
 
 group :development do
   gem 'sys-proctable'
