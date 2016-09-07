@@ -73,10 +73,10 @@ module Resque
       private
 
       def complete_worker_config?
-        host = host_maximums.delete_if { |_, v| v.nil? }
-        cluster = cluster_maximums.delete_if { |_, v| v.nil? }
+        host_keys    = Set.new(host_maximums.delete_if { |_, v| v.nil? }.keys)
+        cluster_keys = Set.new(cluster_maximums.delete_if { |_, v| v.nil? }.keys)
 
-        (host.keys == cluster.keys).tap do |complete|
+        (host_keys == cluster_keys).tap do |complete|
           @errors << "Every worker configuration must contain a local and a global maximum." unless complete
         end
       end
