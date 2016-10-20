@@ -85,9 +85,9 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Clusters and Environments" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test1-cluster")
-      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG, "test-cluster", "test1")
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+      @b = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3, "test1-cluster")
+      @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3, "test-cluster", "test1")
       @a.start
       @b.start
       @c.start
@@ -108,8 +108,8 @@ RSpec.describe "Resque test-cluster" do
 
   context "Multiple Configs in the same cluster" do
     before :all do
-      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG)
-      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG)
+      @a = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_CONFIG3)
+      @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG3)
       @c = TestMemberManager.new(LOCAL_CONFIG, GLOBAL_REBALANCE_CONFIG2)
       @a.start
       @b.start

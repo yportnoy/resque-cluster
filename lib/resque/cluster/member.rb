@@ -85,11 +85,20 @@ module Resque
         end
       end
 
+      def gru_redis_connection
+        if @global_config["redis_client_options"]
+          connection_options = @global_config["redis_client_options"]
+          {host: connection_options["host"], port: connection_options["port"]}
+        else
+          Resque.redis.client.options
+        end
+      end
+
       def cluster_member_settings
         {
           cluster_maximums:         @global_config["global_maximums"] || @global_config,
           host_maximums:            @local_config,
-          client_settings:          Resque.redis.client.options,
+          client_settings:          gru_redis_connection,
           rebalance_flag:           @global_config["rebalance_cluster"] || false,
           max_workers_per_host:     @global_config["max_workers_per_host"] || nil,
           cluster_name:             Cluster.config[:cluster_name],

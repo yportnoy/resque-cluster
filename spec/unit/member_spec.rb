@@ -43,6 +43,7 @@ RSpec.describe Resque::Cluster::Member do
     it 'returns a correct cluster settings hash with global_config with a rebalance param' do
       Resque::Cluster.config[:global_config_path] = File.expand_path(File.dirname(__FILE__) + '/../global_rebalance_config.yml')
       @settings_hash[:rebalance_flag] = true
+      @settings_hash[:client_settings] = {host: "127.0.0.1", port: 6378}
       @member = Resque::Cluster.init(@pool)
       expect(Resque::Cluster.member.send(:cluster_member_settings)).to eq(@settings_hash)
     end
