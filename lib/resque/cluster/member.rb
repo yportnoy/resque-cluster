@@ -15,7 +15,7 @@ module Resque
           @worker_count_manager = initialize_gru
         else
           @config.log_errors
-          @pool.quit
+          @pool.premature_quit
         end
       end
 

@@ -22,9 +22,9 @@ module Resque
       original_maintain_worker_count.bind(self).call
     end
 
-    def quit
+    def premature_quit
       log "Quiting ..."
-      Process.kill(:TERM, Process.pid)
+      Process.kill(:QUIT, Process.pid)
     end
 
     def cluster_update
