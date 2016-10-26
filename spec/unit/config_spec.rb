@@ -34,8 +34,7 @@ RSpec.describe Resque::Cluster::Config do
         max_workers_per_host:     10,
         cluster_name:             "unit-test-cluster",
         environment_name:         "unit-test",
-        manage_worker_heartbeats: true,
-        version_hash:             `git rev-parse --verify HEAD`.strip
+        manage_worker_heartbeats: true
       }
     end
 
@@ -120,8 +119,7 @@ RSpec.describe Resque::Cluster::Config do
           max_workers_per_host:     nil,
           cluster_name:             "unit-test-cluster",
           environment_name:         "unit-test",
-          manage_worker_heartbeats: true,
-          version_hash:             `git rev-parse --verify HEAD`.strip
+          manage_worker_heartbeats: true
         }
       end
 
@@ -130,10 +128,6 @@ RSpec.describe Resque::Cluster::Config do
       it "config should have no warnings or errors" do
         expect(config.errors.count).to eql(0)
         expect(config.warnings.count).to eql(0)
-      end
-
-      it "git_version_hash should be set" do
-        expect(config.version_git_hash).to eql(`git rev-parse --verify HEAD`.strip)
       end
     end
 
@@ -184,10 +178,6 @@ RSpec.describe Resque::Cluster::Config do
 
       it "gru_format should return a an empty hash" do
         expect(config.gru_format).to eql(correct_hash)
-      end
-
-      it "git_version_hash should not be set" do
-        expect(config.version_git_hash).to be_nil
       end
     end
   end

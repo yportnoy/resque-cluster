@@ -157,8 +157,8 @@ RSpec.describe "Resque test-cluster" do
       sleep(8) # rebalance time
       expect(TestMemberManager.counts).to eq('par' => 3, 'tar' => 6, 'par,tar,var' => 2)
       expect(@a.counts).to eq('par' => 1, 'tar' => 2, 'par,tar,var' => 1)
-      expect(@b.counts).to eq('par' => 1, 'tar' => 2)
-      expect(@c.counts).to eq('par' => 1, 'tar' => 2, 'par,tar,var' => 1)
+      expect(@b.counts).to eq('par' => 1, 'tar' => 2, 'par,tar,var' => 1)
+      expect(@c.counts).to eq('par' => 1, 'tar' => 2)
     end
 
     after :all do

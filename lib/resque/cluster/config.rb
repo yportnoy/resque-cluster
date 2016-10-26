@@ -7,7 +7,7 @@ module Resque
     class Config
       extend Forwardable
 
-      attr_reader :configs, :config, :global_config, :verifier, :version_git_hash
+      attr_reader :configs, :config, :global_config, :verifier
 
       def initialize(config_path, global_config_path = nil)
         @config = Config::File.new(config_path)
@@ -26,7 +26,6 @@ module Resque
 
         @errors           = Set.new
         @verifier         = Verifier.new(configs)
-        @version_git_hash = config_version
       end
 
       def verified?
@@ -45,8 +44,7 @@ module Resque
           cluster_maximums:         cluster_maximums,
           rebalance_flag:           rebalance_flag || false,
           max_workers_per_host:     max_workers_per_host || nil,
-          presume_host_dead_after:  presume_dead_after || 120,
-          version_hash:             version_git_hash
+          presume_host_dead_after:  presume_dead_after || 120
         }
       end
 
@@ -147,22 +145,6 @@ module Resque
           else
             :old
           end
-      end
-
-      def config_version
-        return unless verified?
-
-        directory_name = config.dirname
-
-        if directory_name.exist?
-          output = Dir.chdir(directory_name) { `git rev-parse --verify HEAD`.chomp }
-
-          if $?.success?
-            @version_git_hash = output
-          else
-            @warnings << "Your config directory: #{directory_name} is not a git repo. Your configuration will not be versioned"
-          end
-        end
       end
     end
   end

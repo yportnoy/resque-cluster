@@ -15,7 +15,7 @@ module Resque
           @worker_count_manager = initialize_gru
         else
           @config.log_errors
-          @pool.quit
+          @pool.premature_quit
         end
       end
 
@@ -37,7 +37,7 @@ module Resque
       private
 
       def global_prefix
-        "cluster:#{Cluster.config[:cluster_name]}:#{Cluster.config[:environment]}:#{@config.version_git_hash}"
+        "cluster:#{Cluster.config[:cluster_name]}:#{Cluster.config[:environment]}"
       end
 
       def member_prefix
