@@ -37,7 +37,7 @@ module Resque
       private
 
       def global_prefix
-        "cluster:#{Cluster.config[:cluster_name]}:#{Cluster.config[:environment]}:#{@config.version_git_hash}"
+        "cluster:#{Cluster.config[:cluster_name]}:#{Cluster.config[:environment]}"
       end
 
       def member_prefix
