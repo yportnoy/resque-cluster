@@ -29,5 +29,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'jeweler', '~> 2.0.1'
   s.add_development_dependency 'simplecov', '>= 0'
   s.add_development_dependency 'rubocop', '~> 0.31'
-  s.add_development_dependency 'mock_redis', '~> 0.15.0'
 end
