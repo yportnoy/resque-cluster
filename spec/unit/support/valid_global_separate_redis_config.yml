@@ -1,0 +1,16 @@
+rebalance_cluster: true
+max_workers_per_host: 10
+presume_dead_after: 60
+workers:
+  foo:
+    local: 1
+    global: 2
+  bar:
+    local: 9
+    global: 50
+  "foo,bar,baz":
+    local: 1
+    global: 1
+redis_client_options:
+  host: "127.0.0.1"
+  port: 6378

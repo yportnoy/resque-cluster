@@ -3,3 +3,6 @@ global_maximums:
   par: 4
   tar: 6
   "par,tar,var": 2
+redis_client_options:
+  host: "127.0.0.1"
+  port: 6378 

@@ -38,7 +38,7 @@ module Resque
         {
           manage_worker_heartbeats: true,
           host_maximums:            host_maximums,
-          client_settings:          Resque.redis.client.options,
+          client_settings:          gru_redis_connection,
           cluster_name:             Cluster.config[:cluster_name],
           environment_name:         Cluster.config[:environment],
           cluster_maximums:         cluster_maximums,
@@ -69,6 +69,15 @@ module Resque
       end
 
       private
+
+      def gru_redis_connection
+        if @global_config && @global_config["redis_client_options"]
+          connection_options = @global_config["redis_client_options"]
+          {host: connection_options["host"], port: connection_options["port"]}
+        else
+          Resque.redis.client.options
+        end
+      end
 
       def complete_worker_config?
         host_keys    = Set.new(host_maximums.delete_if { |_, v| v.nil? }.keys)
