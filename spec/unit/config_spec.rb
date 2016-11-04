@@ -140,7 +140,7 @@ RSpec.describe Resque::Cluster::Config do
         {
           cluster_maximums:         { 'foo' => 2, 'bar' => 50, "foo,bar,baz" => 1 },
           host_maximums:            { 'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1 },
-          client_settings:          {:host=>"127.0.0.1", :port=>6378},
+          client_settings:          {"host"=>"127.0.0.1", "port"=>6378},
           rebalance_flag:           true,
           presume_host_dead_after:  120,
           max_workers_per_host:     nil,

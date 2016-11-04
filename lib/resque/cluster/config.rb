@@ -71,11 +71,15 @@ module Resque
       private
 
       def gru_redis_connection
-        if @global_config && @global_config["redis_client_options"]
-          connection_options = @global_config["redis_client_options"]
-          {host: connection_options["host"], port: connection_options["port"]}
-        else
+        case config_type
+        when :separate
+          global_config['redis_client_options'] ||
+            Resque.redis.client.options
+        when :old
           Resque.redis.client.options
+        when :new
+          config['redis_client_options'] ||
+            Resque.redis.client.options
         end
       end
 
