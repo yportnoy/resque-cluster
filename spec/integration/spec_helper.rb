@@ -1,4 +1,4 @@
-require 'pry'
+require 'byebug'
 require 'rspec'
 require 'sys/proctable'
 require 'resque'

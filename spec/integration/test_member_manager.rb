@@ -1,5 +1,6 @@
 class TestMemberManager
   include Sys
+  require 'resque/cluster/config'
 
   attr_accessor :pid
 
@@ -88,6 +89,14 @@ class TestMemberManager
 
   def hostname
     @hostname ||= "#{Socket.gethostname}-#{member_count+1}"
+  end
+
+  def last_gru_ping
+    redis_connection.hget("GRU:#{@environment}:#{@cluster_name}:heartbeats", hostname).to_i
+  end
+
+  def redis_connection
+    @redis_connection ||= Redis.new
   end
 
   def self.parse_worker_name(worker_cmdline)

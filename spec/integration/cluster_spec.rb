@@ -172,13 +172,19 @@ RSpec.describe "Resque test-cluster" do
       @b = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_CONFIG2)
       @c = TestMemberManager.new(LOCAL_CONFIG2, GLOBAL_REBALANCE_CONFIG2)
       @a.start
+      @a_ping = @a.last_gru_ping
       @b.start
+      @b_ping = @b.last_gru_ping
       @c.start
+      @c_ping = @c.last_gru_ping
       sleep(5) # rebalance time
     end
 
     it 'expects to have a correct number of workers in the cluster after multiple restarts' do
       expect(TestMemberManager.counts).to eq({"star"=>12})
+      expect(@a.last_gru_ping).to be > @a_ping
+      expect(@b.last_gru_ping).to be > @b_ping
+      expect(@c.last_gru_ping).to be > @c_ping
       2.times do
         sleep(5)
         @a.stop
@@ -190,11 +196,20 @@ RSpec.describe "Resque test-cluster" do
         @c.stop
         @c.start
       end
+      @a_ping = @a.last_gru_ping
+      @b_ping = @b.last_gru_ping
+      @c_ping = @c.last_gru_ping
       sleep(8) # rebalance time
       expect(TestMemberManager.counts).to eq({"star"=>12})
       expect(@a.counts).to eq({"star"=>4})
       expect(@b.counts).to eq({"star"=>4})
       expect(@c.counts).to eq({"star"=>4})
+      expect(@a.last_gru_ping).to be > @a_ping
+      expect(@b.last_gru_ping).to be > @b_ping
+      expect(@c.last_gru_ping).to be > @c_ping
+      @a_ping = @a.last_gru_ping
+      @b_ping = @b.last_gru_ping
+      @c_ping = @c.last_gru_ping
     end
 
     it 'will not rebalance after the cluster is switched to rebalance-cluster false' do
@@ -202,6 +217,9 @@ RSpec.describe "Resque test-cluster" do
       sleep(2)
       @b.start
       sleep(8)
+      expect(@a.last_gru_ping).to be > @a_ping
+      expect(@b.last_gru_ping).to be > @b_ping
+      expect(@c.last_gru_ping).to be > @c_ping
       expect(TestMemberManager.counts).to eq({"star"=>12})
       expect(@a.counts).to eq({"star"=>6})
       expect(@b.counts).to eq({})
