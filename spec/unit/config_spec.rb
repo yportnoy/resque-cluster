@@ -131,6 +131,34 @@ RSpec.describe Resque::Cluster::Config do
       end
     end
 
+    context "with separate redis config in config files" do
+      let(:config)             { Resque::Cluster::Config.new(local_config_path, global_config_path) }
+      let(:local_config_path)  { File.expand_path(File.dirname(__FILE__) + '/../local_config.yml') }
+      let(:global_config_path) { File.expand_path(File.dirname(__FILE__) + '/../global_rebalance_config.yml') }
+
+      let(:correct_hash) do
+        {
+          cluster_maximums:         { 'foo' => 2, 'bar' => 50, "foo,bar,baz" => 1 },
+          host_maximums:            { 'foo' => 1, 'bar' => 9, "foo,bar,baz" => 1 },
+          client_settings:          {"host"=>"127.0.0.1", "port"=>6378},
+          rebalance_flag:           true,
+          presume_host_dead_after:  120,
+          max_workers_per_host:     nil,
+          cluster_name:             "unit-test-cluster",
+          environment_name:         "unit-test",
+          manage_worker_heartbeats: true
+        }
+      end
+
+      it_behaves_like 'a valid config'
+
+      it "config should have no warnings or errors" do
+        expect(config.errors.count).to eql(0)
+        expect(config.warnings.count).to eql(0)
+      end
+    end
+
+
     context 'with a missing local maximum' do
       let(:config)             { Resque::Cluster::Config.new(local_config_path, global_config_path) }
       let(:local_config_path)  { support_dir + 'separate_missing_local.yml' }

@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency  'resque-pool', '~> 0.5.0'
   s.add_dependency  'gru', '0.1.3'
 
-  s.add_development_dependency 'pry', '> 0.0'
+  s.add_development_dependency 'byebug', '> 0.0'
   s.add_development_dependency 'awesome_print', '> 0.0'
   s.add_development_dependency 'rspec', '~> 3.1.0'
   s.add_development_dependency 'rdoc', '~> 3.12'
