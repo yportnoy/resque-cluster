@@ -53,6 +53,7 @@ module Resque
 
       def adjust_worker_counts(count_adjustments)
         count_adjustments.each do |worker, count|
+          next if count == 0
           @pool.adjust_worker_counts(worker, count)
           update_counts
         end
