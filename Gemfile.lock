@@ -64,7 +64,7 @@ GEM
     rack-protection (1.5.3)
       rack
     rainbow (2.1.0)
-    rake (11.2.2)
+    rake (13.0.1)
     rdoc (3.12.2)
       json (~> 1.4)
     redis (3.3.1)
