@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'byebug', '> 0.0'
   s.add_development_dependency 'awesome_print', '> 0.0'
   s.add_development_dependency 'rspec', '~> 3.1.0'
-  s.add_development_dependency 'rdoc', '~> 3.12'
+  s.add_development_dependency 'rdoc', '~> 6.3'
   s.add_development_dependency 'bundler', '~> 1.7'
   s.add_development_dependency 'jeweler', '~> 2.0.1'
   s.add_development_dependency 'simplecov', '>= 0'

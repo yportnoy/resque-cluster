@@ -40,7 +40,7 @@ GEM
       nokogiri (>= 1.5.10)
       rake
       rdoc
-    json (1.8.3)
+    json (2.5.1)
     jwt (1.5.4)
     mini_portile2 (2.1.0)
     mono_logger (1.1.0)
@@ -65,8 +65,7 @@ GEM
       rack
     rainbow (2.1.0)
     rake (11.2.2)
-    rdoc (3.12.2)
-      json (~> 1.4)
+    rdoc (6.3.2)
     redis (3.3.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
@@ -125,7 +124,7 @@ DEPENDENCIES
   byebug (> 0.0)
   ffi
   jeweler (~> 2.0.1)
-  rdoc (~> 3.12)
+  rdoc (~> 6.3)
   resque-cluster!
   rspec (~> 3.1.0)
   rubocop (~> 0.31)
